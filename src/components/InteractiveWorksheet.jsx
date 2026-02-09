@@ -1,12 +1,83 @@
 import React, { useState } from 'react';
-import { CheckCircle, XCircle, MessageSquare, Send, Loader2, Lightbulb, Award, Target, Brain } from 'lucide-react';
+import { supabase } from '../supabaseClient';
+import { CheckCircle, XCircle, MessageSquare, Send, Loader2, Lightbulb, Award, Target, Brain, Compass, HelpCircle, Heart, ThumbsUp, RefreshCw, BookOpen, Clock } from 'lucide-react';
+import WordOrderVip from './WordOrderVip';
+import FragmentVip from './FragmentVip';
+import ClassificationVip from './ClassificationVip';
+import ConnectorVip from './ConnectorVip';
+import ScannerVip from './ScannerVip';
+import VoiceActiveVip from './VoiceActiveVip';
 
-const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId }) => {
+const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId, enableTimer, hideHints }) => {
     const [answers, setAnswers] = useState({});
     const [correctionResult, setCorrectionResult] = useState(null);
     const [correcting, setCorrecting] = useState(false);
     const [revealedHints, setRevealedHints] = useState({});
+    const [savedQuestions, setSavedQuestions] = useState({});
+    const [retryingIds, setRetryingIds] = useState([]);
+
     const [startTime] = useState(Date.now());
+    const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
+    // Timer Logic
+    React.useEffect(() => {
+        let interval;
+        if (enableTimer && !correctionResult) {
+            interval = setInterval(() => {
+                setElapsedSeconds(prev => prev + 1);
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [enableTimer, correctionResult]);
+
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const saveQuestionToBank = async (question) => {
+        try {
+            const { error } = await supabase.from('question_bank_local').insert({
+                source: 'AI_SAVED',
+                topic: data.title || 'General',
+                grade_level: data.metadata_lomloe?.curso || 'General',
+                subject: data.metadata_lomloe?.asignatura || 'General',
+                question_text: question.text,
+                question_type: question.type || 'short_answer',
+                options: question.options || [],
+                correct_answer: question.correct_answer || '',
+                difficulty: question.difficulty || 'media',
+                image_url: question.imagen || null,
+                metadata: {
+                    ...question,
+                    saved_at: new Date().toISOString(),
+                    lomloe_criterios: question.criterio_evaluacion
+                }
+            });
+
+            if (error) throw error;
+            setSavedQuestions(prev => ({ ...prev, [question.id]: true }));
+        } catch (e) {
+            console.error("Error saving question:", e.message);
+            alert("Error guardando pregunta: " + e.message);
+        }
+    };
+
+    const handleRetryErrors = () => {
+        if (!correctionResult) return;
+        const wrongIds = Object.keys(correctionResult.corrections).filter(
+            id => correctionResult.corrections[id].correct === false
+        );
+        if (wrongIds.length === 0) return;
+        setRetryingIds(wrongIds);
+        setAnswers(prev => {
+            const next = { ...prev };
+            wrongIds.forEach(id => delete next[id]);
+            return next;
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const handleAnswerChange = (qId, value) => {
         setAnswers(prev => ({ ...prev, [qId]: value }));
@@ -42,43 +113,72 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId }) => {
         });
     });
 
-    return (
-        <div className="max-w-4xl mx-auto space-y-8 animate-fade-in print:p-0">
-            {/* Header */}
-            <div className="text-center mb-8 border-b pb-6">
-                <h1 className="text-3xl font-extrabold text-blue-700 mb-2">{data.title}</h1>
-                <p className="text-gray-600">{data.intro}</p>
+    const hasQuestions = data.sections?.some(s => s.questions && s.questions.length > 0);
 
-                {/* LOMLOE Metadata Pills */}
-                {data.metadata_lomloe && (
-                    <div className="mt-4 flex flex-wrap gap-2 justify-center">
-                        <div className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold flex items-center gap-1">
-                            <Award className="w-3 h-3" />
-                            {data.metadata_lomloe.asignatura} - {data.metadata_lomloe.curso}
+    return (
+        <div className="max-w-4xl mx-auto space-y-8 animate-fade-in print:p-0 font-sans">
+            {/* Santillana Workbook Style Header */}
+            <div className="relative overflow-hidden bg-white rounded-3xl border-2 border-slate-100 shadow-xl mb-10">
+                <div className="absolute top-0 left-0 w-2 h-full bg-red-600"></div>
+                <div className="p-8">
+                    <div className="flex justify-between items-start mb-4">
+                        <div className="space-y-1">
+                            <span className="inline-block px-3 py-1 bg-red-100 text-red-700 text-[10px] font-black uppercase tracking-widest rounded-full mb-2">
+                                Ficha de Refuerzo Santillana
+                            </span>
+                            <h1 className="text-4xl font-black text-slate-900 tracking-tight">
+                                {data.title}
+                            </h1>
                         </div>
-                        {competenciasSet.size > 0 && (
-                            <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold flex items-center gap-1">
-                                <Brain className="w-3 h-3" />
-                                Competencias: {Array.from(competenciasSet).join(', ')}
+                        <div className="hidden sm:block">
+                            <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-red-200">
+                                4º
+                            </div>
+                        </div>
+                    </div>
+
+                    <p className="text-slate-500 text-lg max-w-2xl border-l-2 border-slate-100 pl-4">{data.intro || 'Practica los contenidos clave para tu examen.'}</p>
+
+                    <div className="mt-8 flex flex-wrap gap-4 items-center pt-6 border-t border-slate-50">
+                        {enableTimer && (
+                            <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl font-mono font-bold shadow-md">
+                                <Clock className="w-4 h-4 text-red-500" />
+                                {formatTime(elapsedSeconds)}
                             </div>
                         )}
-                        {criteriosSet.size > 0 && (
-                            <div className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold flex items-center gap-1">
-                                <Target className="w-3 h-3" />
-                                {criteriosSet.size} Criterio{criteriosSet.size > 1 ? 's' : ''} LOMLOE
-                            </div>
+
+                        {data.metadata_lomloe && (
+                            <>
+                                <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl font-bold text-sm">
+                                    <BookOpen className="w-4 h-4" />
+                                    {data.metadata_lomloe.asignatura}
+                                </div>
+                                <div className="flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-700 rounded-xl font-bold text-sm">
+                                    <Target className="w-4 h-4" />
+                                    Unidad 5 y 6
+                                </div>
+                            </>
                         )}
                     </div>
-                )}
+                </div>
             </div>
 
-            {/* Theory Summary */}
+            {/* Theory Summary - Premium Design */}
             {data.theory_recap && (
-                <div className="bg-purple-50 p-6 rounded-2xl border border-purple-100 mb-8 shadow-sm print:shadow-none">
-                    <h3 className="font-bold text-purple-800 mb-3 flex items-center gap-2">
-                        <span className="text-2xl">💡</span> Resumen Teórico
-                    </h3>
-                    <div className="prose prose-purple text-sm" dangerouslySetInnerHTML={{ __html: data.theory_recap }} />
+                <div className="bg-gradient-to-br from-indigo-600 to-blue-700 p-1 rounded-[2.5rem] shadow-2xl overflow-hidden">
+                    <div className="bg-white/95 backdrop-blur-sm p-10 rounded-[2.4rem]">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
+                                <Lightbulb className="w-6 h-6 text-indigo-600" />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black text-slate-900 tracking-tight">Puntos Clave</h3>
+                                <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Lo que debes saber para empezar</p>
+                            </div>
+                        </div>
+                        <div className="prose prose-blue max-w-none text-slate-600 leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: data.theory_recap }} />
+                    </div>
                 </div>
             )}
 
@@ -87,6 +187,34 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId }) => {
                 {data.sections?.map((section, sIdx) => (
                     <div key={sIdx} className="space-y-6">
                         {section.title && <h2 className="text-xl font-bold text-gray-800 border-l-4 border-blue-500 pl-3">{section.title}</h2>}
+
+                        {/* STUDY MODE: Content Blocks */}
+                        {section.content_blocks && (
+                            <div className="space-y-4 mb-8">
+                                {section.content_blocks.map((block, bIdx) => (
+                                    <div key={bIdx} className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                                        {block.type === 'text' && (
+                                            <p className="text-gray-700 leading-relaxed text-lg">{block.content}</p>
+                                        )}
+                                        {block.type === 'list' && (
+                                            <ul className="list-disc pl-5 space-y-2">
+                                                {block.items?.map((item, i) => (
+                                                    <li key={i} className="text-gray-700">{item}</li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                        {block.type === 'mermaid' && (
+                                            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 font-mono text-xs overflow-x-auto">
+                                                <div className="flex items-center gap-2 mb-2 text-slate-500 font-bold uppercase text-[10px]">
+                                                    <Brain className="w-4 h-4" /> Estructura Mental (Diagrama)
+                                                </div>
+                                                <pre>{block.content}</pre>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
 
                         <div className="space-y-6">
                             {section.questions?.map((q, qIdx) => {
@@ -108,6 +236,35 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId }) => {
                                                                 <h4 className="font-bold text-blue-900">Lee el siguiente texto:</h4>
                                                             </div>
                                                             <div className="text-gray-800 leading-relaxed text-base" dangerouslySetInnerHTML={{ __html: q.reading_text }} />
+                                                        </div>
+                                                    )}
+
+                                                    {/* Single Image (maps, charts, single photos) */}
+                                                    {q.imagen && (
+                                                        <div className="mb-4 p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+                                                            <img
+                                                                src={q.imagen}
+                                                                alt="Material educativo"
+                                                                className="w-full max-w-2xl mx-auto rounded-lg shadow-md"
+                                                            />
+                                                        </div>
+                                                    )}
+
+                                                    {/* Multiple Images (comparison, image questions) */}
+                                                    {q.imagenes && Array.isArray(q.imagenes) && q.imagenes.length > 0 && (
+                                                        <div className="mb-4 p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+                                                            <div className="grid grid-cols-2 gap-4">
+                                                                {q.imagenes.map((img, idx) => (
+                                                                    <div key={idx} className="text-center">
+                                                                        <img
+                                                                            src={img}
+                                                                            alt={`Imagen ${idx + 1}`}
+                                                                            className="w-full rounded-lg shadow-md mb-2"
+                                                                        />
+                                                                        <span className="text-sm font-semibold text-gray-600">Imagen {idx + 1}</span>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
                                                         </div>
                                                     )}
 
@@ -136,9 +293,21 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId }) => {
                                                 </div>
                                             </div>
 
-                                            {/* Correction Status Icon */}
-                                            {isCorrect && <CheckCircle className="w-6 h-6 text-green-600 shrink-0" />}
-                                            {isWrong && <XCircle className="w-6 h-6 text-red-600 shrink-0" />}
+                                            {/* Action Buttons: Correction Status + Save to Bank */}
+                                            <div className="flex flex-col items-center gap-2 shrink-0">
+                                                {isCorrect && <CheckCircle className="w-6 h-6 text-green-600" />}
+                                                {isWrong && <XCircle className="w-6 h-6 text-red-600" />}
+
+                                                {/* Save Button (Teacher-in-the-Loop) */}
+                                                <button
+                                                    onClick={() => saveQuestionToBank(q)}
+                                                    className={`p-1.5 rounded-full transition-all ${savedQuestions[q.id] ? 'bg-yellow-100 text-yellow-600' : 'text-gray-300 hover:bg-gray-100 hover:text-blue-500'}`}
+                                                    title={savedQuestions[q.id] ? "Guardada en Banco de Preguntas" : "Guardar pregunta en mi Banco Local"}
+                                                    disabled={savedQuestions[q.id]}
+                                                >
+                                                    <ThumbsUp className={`w-5 h-5 ${savedQuestions[q.id] ? 'fill-current' : ''}`} />
+                                                </button>
+                                            </div>
                                         </div>
 
                                         {/* Inputs based on Type */}
@@ -154,7 +323,7 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId }) => {
                                                                 className="w-5 h-5 text-blue-600 focus:ring-blue-500"
                                                                 checked={answers[q.id] === opt}
                                                                 onChange={() => handleAnswerChange(q.id, opt)}
-                                                                disabled={!!correctionResult}
+                                                                disabled={!!correctionResult && !retryingIds.includes(q.id)}
                                                             />
                                                             <span className="text-gray-700">{opt}</span>
                                                         </label>
@@ -162,24 +331,172 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId }) => {
                                                 </div>
                                             )}
 
-                                            {/* Short Answer, Fill Gaps, or any text-based type */}
+                                            {/* Text Input - Nivel DIFÍCIL */}
+                                            {q.type === 'text_input' && (
+                                                <div className="space-y-3">
+                                                    <input
+                                                        type="text"
+                                                        className="w-full p-4 border-2 border-blue-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white transition-all text-lg font-medium"
+                                                        placeholder="Escribe tu respuesta aquí..."
+                                                        value={answers[q.id] || ''}
+                                                        onChange={e => handleAnswerChange(q.id, e.target.value)}
+                                                        disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                    />
+                                                    {q.sample_answer && !correctionResult && (
+                                                        <p className="text-xs text-gray-500 italic">💡 Ejemplo válido: "{q.sample_answer}"</p>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            {/* Word Order - Nivel VIP (Diamante) */}
+                                            {q.type === 'word_order' && q.words && (
+                                                <WordOrderVip
+                                                    questionId={q.id}
+                                                    words={q.words}
+                                                    initialValue={answers[q.id]}
+                                                    disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                    onAnswerChange={(id, val, metadata) => {
+                                                        // Guardamos la respuesta y adjuntamos metadatos de proceso para el evaluador
+                                                        setAnswers(prev => ({
+                                                            ...prev,
+                                                            [id]: val,
+                                                            [`${id}_process`]: metadata
+                                                        }));
+                                                    }}
+                                                />
+                                            )}
+
+                                            {/* Fill Blanks - Nivel MEDIO / VIP */}
+                                            {q.type === 'fill_blanks' && q.word_bank && (
+                                                <FragmentVip
+                                                    questionId={q.id}
+                                                    text={q.text}
+                                                    wordBank={q.word_bank}
+                                                    initialValue={answers[q.id]}
+                                                    disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                    onAnswerChange={(id, val, metadata) => {
+                                                        setAnswers(prev => ({
+                                                            ...prev,
+                                                            [id]: val,
+                                                            [`${id}_process`]: metadata
+                                                        }));
+                                                    }}
+                                                />
+                                            )}
+
+                                            {/* Voice Active - VIP Oral Mode */}
+                                            {q.type === 'voice' && (
+                                                <VoiceActiveVip
+                                                    questionId={q.id}
+                                                    instruction={q.ejercicio}
+                                                    correctAnswer={q.correct_answer || q.respuesta}
+                                                    initialValue={answers[q.id]}
+                                                    disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                    onAnswerChange={(id, val, metadata) => {
+                                                        setAnswers(prev => ({
+                                                            ...prev,
+                                                            [id]: val,
+                                                            [`${id}_process`]: metadata
+                                                        }));
+                                                    }}
+                                                />
+                                            )}
+
+                                            {/* Scanner - VIP Detective Highlighter */}
+                                            {q.type === 'scanner' && q.text && (
+                                                <ScannerVip
+                                                    questionId={q.id}
+                                                    text={q.text}
+                                                    initialValue={answers[q.id]}
+                                                    disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                    onAnswerChange={(id, val, metadata) => {
+                                                        setAnswers(prev => ({
+                                                            ...prev,
+                                                            [id]: val,
+                                                            [`${id}_process`]: metadata
+                                                        }));
+                                                    }}
+                                                />
+                                            )}
+
+                                            {/* Connector - VIP Magnetic Bridges */}
+                                            {q.type === 'connector' && q.pairs && (
+                                                <ConnectorVip
+                                                    questionId={q.id}
+                                                    pairs={q.pairs}
+                                                    initialValue={answers[q.id]}
+                                                    disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                    onAnswerChange={(id, val, metadata) => {
+                                                        setAnswers(prev => ({
+                                                            ...prev,
+                                                            [id]: val,
+                                                            [`${id}_process`]: metadata
+                                                        }));
+                                                    }}
+                                                />
+                                            )}
+
+                                            {/* Classification - VIP Magnetic Cubes */}
+                                            {q.type === 'classification' && q.items && q.buckets && (
+                                                <ClassificationVip
+                                                    questionId={q.id}
+                                                    items={q.items}
+                                                    buckets={q.buckets}
+                                                    initialValue={answers[q.id]}
+                                                    disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                    onAnswerChange={(id, val, metadata) => {
+                                                        setAnswers(prev => ({
+                                                            ...prev,
+                                                            [id]: val,
+                                                            [`${id}_process`]: metadata
+                                                        }));
+                                                    }}
+                                                />
+                                            )}
+
+                                            {/* Multi Input - Para listas de palabras (Santillana Style) */}
+                                            {q.type === 'multi_input' && q.items && (
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                    {q.items.map((item, idx) => (
+                                                        <div key={idx} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                                            <span className="font-bold text-gray-700">{item.prefix || ''}</span>
+                                                            <input
+                                                                type="text"
+                                                                className="flex-1 p-2 border-2 border-blue-200 rounded-lg focus:border-blue-500 bg-white text-sm"
+                                                                placeholder={item.placeholder || '...'}
+                                                                value={(answers[q.id] && answers[q.id][idx]) || ''}
+                                                                onChange={e => {
+                                                                    const current = answers[q.id] || new Array(q.items.length).fill('');
+                                                                    const next = [...current];
+                                                                    next[idx] = e.target.value;
+                                                                    handleAnswerChange(q.id, next);
+                                                                }}
+                                                                disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                            />
+                                                            <span className="font-bold text-gray-700">{item.suffix || ''}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {/* Short Answer, Fill Gaps, or any text-based type (fallback) */}
                                             {(q.type === 'short_answer' || q.type === 'fill_gaps' ||
-                                                (!q.options || q.options.length === 0)) && (
+                                                (!q.options || q.options.length === 0)) && q.type !== 'text_input' && q.type !== 'word_order' && q.type !== 'fill_blanks' && (
                                                     <textarea
                                                         className="w-full p-4 border-2 border-dashed border-gray-300 rounded-xl focus:border-blue-500 focus:ring-0 bg-white transition-all text-lg"
                                                         rows={3}
                                                         placeholder="Escribe tu respuesta aquí..."
                                                         value={answers[q.id] || ''}
                                                         onChange={e => handleAnswerChange(q.id, e.target.value)}
-                                                        disabled={!!correctionResult}
+                                                        disabled={!!correctionResult && !retryingIds.includes(q.id)}
                                                     />
                                                 )}
 
-                                            {/* Hint Button */}
-                                            {q.hint && !correctionResult && (
+                                            {/* Hint Button (Conditionally Rendered) */}
+                                            {q.hint && !correctionResult && !hideHints && (
                                                 <button
                                                     onClick={() => toggleHint(q.id)}
-                                                    className="mt-3 flex items-center gap-2 text-sm text-orange-600 hover:text-orange-700 font-medium"
+                                                    className="mt-3 flex items-center gap-2 text-sm text-orange-600 hover:text-orange-700 font-medium transition-colors"
                                                 >
                                                     <Lightbulb className="w-4 h-4" />
                                                     {revealedHints[q.id] ? 'Ocultar Pista' : 'Necesito una Pista'}
@@ -194,12 +511,25 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId }) => {
                                             )}
 
                                             {/* Feedback (After Correction) */}
-                                            {correctionResult && correctionResult.corrections[q.id] && (
+                                            {correctionResult && correctionResult.corrections[q.id] && !retryingIds.includes(q.id) && (
                                                 <div className={`mt-4 p-4 rounded-lg border-l-4 ${isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
                                                     <p className={`font-bold mb-2 ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
                                                         {isCorrect ? '✅ ¡Correcto!' : '❌ Incorrecto'}
                                                     </p>
-                                                    <p className="text-sm text-gray-700">{correctionResult.corrections[q.id].feedback}</p>
+
+                                                    {/* Intelligent Feedback Logic */}
+                                                    {/* [RESET] Forced Unified Feedback: Ignoramos mapas y tarjetas antiguas para empezar de cero */}
+                                                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg shadow-sm animate-in fade-in slide-in-from-bottom-2">
+                                                        <div className="flex items-start gap-2">
+                                                            <span className="text-lg">💡</span>
+                                                            <div>
+                                                                <p className="text-xs font-bold text-blue-800 uppercase mb-1">Explicación</p>
+                                                                <p className="text-sm text-blue-900 leading-relaxed font-medium">
+                                                                    {correctionResult.corrections[q.id].feedback}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>
@@ -212,7 +542,7 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId }) => {
             </div>
 
             {/* Submit Button */}
-            {!correctionResult && (
+            {hasQuestions && (!correctionResult || retryingIds.length > 0) && (
                 <div className="flex justify-center pt-8">
                     <button
                         onClick={handleSubmit}
@@ -226,26 +556,130 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId }) => {
             )}
 
             {/* Results Summary */}
-            {correctionResult && (
-                <div className="mt-8 p-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl border-2 border-blue-200">
-                    <div className="text-center mb-6">
-                        <h3 className="text-2xl font-bold text-gray-800 mb-2">📊 Resultado Final</h3>
-                        <div className="text-5xl font-extrabold text-blue-600 mb-2">
-                            {correctionResult.score} / {correctionResult.total}
+            {correctionResult && retryingIds.length === 0 && (
+                <div className="mt-8 space-y-6">
+
+                    {/* GAMIFICATION REWARD CARD */}
+                    {correctionResult.gamification && (
+                        <div className="bg-gradient-to-r from-yellow-100 to-amber-100 p-6 rounded-2xl border-2 border-yellow-300 shadow-md animate-in zoom-in-95 duration-500">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+
+                                {/* XP EARNED */}
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 bg-yellow-400 rounded-full text-white shadow-sm animate-bounce">
+                                        <Award className="w-8 h-8" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-amber-600 uppercase tracking-widest">¡Recompensa!</p>
+                                        <div className="text-3xl font-black text-amber-800 flex items-center gap-2">
+                                            +{correctionResult.gamification.xpEarned} <span className="text-sm text-amber-600">XP</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* STREAK */}
+                                <div className="flex items-center gap-2 px-4 py-2 bg-white/50 rounded-xl">
+                                    <span className="text-2xl">🔥</span>
+                                    <div>
+                                        <p className="text-[10px] font-bold text-gray-500 uppercase">Racha</p>
+                                        <p className="text-xl font-black text-orange-600">{correctionResult.gamification.streak} días</p>
+                                    </div>
+                                </div>
+
+                                {/* LEVEL UP? */}
+                                {correctionResult.gamification.leveledUp && (
+                                    <div className="bg-gradient-to-tr from-purple-600 to-indigo-600 text-white px-6 py-2 rounded-xl shadow-lg animate-pulse">
+                                        <p className="text-xs font-bold opacity-80 uppercase text-center">¡Nuevo Nivel!</p>
+                                        <p className="text-2xl font-black text-center">NIVEL {correctionResult.gamification.newLevel}</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <p className="text-lg text-gray-600">{correctionResult.summary}</p>
-                    </div>
+                    )}
 
-                    {/* Progress Bar */}
-                    <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
-                        <div
-                            className="bg-gradient-to-r from-green-500 to-emerald-500 h-4 rounded-full transition-all duration-1000"
-                            style={{ width: `${(correctionResult.score / correctionResult.total) * 100}%` }}
-                        />
-                    </div>
+                    <div className="p-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl border-2 border-blue-200">
+                        <div className="text-center mb-6">
+                            <h3 className="text-2xl font-bold text-gray-800 mb-2">📊 Resultado Final</h3>
+                            <div className="text-5xl font-extrabold text-blue-600 mb-2">
+                                {correctionResult.score} / {correctionResult.total}
+                            </div>
+                            <p className="text-lg text-gray-600">{correctionResult.summary}</p>
+                        </div>
 
-                    <div className="text-center text-sm text-gray-600">
-                        {Math.round((correctionResult.score / correctionResult.total) * 100)}% de aciertos
+                        {/* Progress Bar */}
+                        <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
+                            <div
+                                className="bg-gradient-to-r from-green-500 to-emerald-500 h-4 rounded-full transition-all duration-1000"
+                                style={{ width: `${(correctionResult.score / correctionResult.total) * 100}%` }}
+                            />
+                        </div>
+
+                        <div className="text-center text-sm text-gray-600 mb-8">
+                            {Math.round((correctionResult.score / correctionResult.total) * 100)}% de aciertos
+                        </div>
+
+                        {correctionResult.score < correctionResult.total && (
+                            <div className="flex justify-center mb-6">
+                                <button
+                                    onClick={handleRetryErrors}
+                                    className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-orange-200 text-orange-600 font-bold rounded-xl hover:bg-orange-50 transition-colors"
+                                >
+                                    <RefreshCw className="w-5 h-5" /> Reintentar Fallos
+                                </button>
+                            </div>
+                        )}
+
+                        {/* ⭐ NUEVO: SECCIÓN BRÚJULA PARA PADRES ⭐ */}
+                        {correctionResult.perfilCognitivo && (
+                            <div className="mt-8 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                                <div className="bg-white rounded-3xl p-8 shadow-sm border border-indigo-100 relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 p-4 opacity-5">
+                                        <Compass className="w-32 h-32 text-indigo-600" />
+                                    </div>
+                                    <div className="relative z-10 space-y-6">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-2 bg-indigo-600 rounded-xl text-white">
+                                                <Compass className="w-6 h-6" />
+                                            </div>
+                                            <h4 className="text-xl font-black text-gray-900 tracking-tight">La Brújula del Aprendizaje</h4>
+                                        </div>
+
+                                        <div className="grid md:grid-cols-2 gap-8">
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-2 text-indigo-700 font-bold uppercase text-[10px] tracking-widest">
+                                                    <Brain className="w-3 h-3" /> Perfil de Procesamiento
+                                                </div>
+                                                <h5 className="text-lg font-bold text-gray-800">{correctionResult.perfilCognitivo.nombre}</h5>
+                                                <p className="text-sm text-gray-600 leading-relaxed">
+                                                    {correctionResult.perfilCognitivo.descripcion}
+                                                </p>
+                                            </div>
+                                            <div className="space-y-3 p-6 bg-indigo-50/50 rounded-2xl border border-indigo-50">
+                                                <div className="flex items-center gap-2 text-rose-600 font-bold uppercase text-[10px] tracking-widest">
+                                                    <Heart className="w-3 h-3" /> Para evitar la frustración
+                                                </div>
+                                                <p className="text-sm text-indigo-900 font-medium italic">
+                                                    "{correctionResult.perfilCognitivo.consejoPadres}"
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-gray-100">
+                                            <button
+                                                onClick={() => alert(correctionResult.mensajePadres)}
+                                                className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-2"
+                                            >
+                                                <MessageSquare className="w-3 h-3" /> Ver informe detallado para padres
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 justify-center text-gray-400 text-[10px] italic">
+                                    <HelpCircle className="w-3 h-3" />
+                                    Basado en patrones de error y niveles cognitivos detectados en esta sesión.
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

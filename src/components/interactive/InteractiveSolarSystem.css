@@ -1,0 +1,52 @@
+.interactive-solar-system-container {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    margin: 1rem 0;
+}
+
+.interactive-solar-system-container h3 {
+    color: #f59e0b !important;
+}
+
+.solar-system-svg {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    background: radial-gradient(circle, #0a0e27 0%, #000 100%);
+    border-radius: 10px;
+}
+
+.planet-circle {
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.planet-circle:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+}
+
+.selected-planet-info {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #4a90e2 0%, #7b68ee 100%);
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    animation: slideUp 0.3s ease;
+}
+
+.selected-planet-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.selected-planet-info p {
+    margin: 0.25rem 0;
+    font-size: 0.95rem;
+}

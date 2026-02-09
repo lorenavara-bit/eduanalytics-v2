@@ -1,0 +1,71 @@
+
+╔═══════════════════════════════════════════════════════════╗
+║         GUÍA RÁPIDA DE CRITERIOS LOMLOE                  ║
+╚═══════════════════════════════════════════════════════════╝
+
+MATEMÁTICAS 4º PRIMARIA:
+────────────────────────
+Tema                          Criterio
+─────────────────────────────────────────────────
+Fracciones                    MAT_PRI4_C1.2
+División                      MAT_PRI4_C1.1
+Sumas y Restas                MAT_PRI4_C1.1
+Números Decimales             MAT_PRI4_C1.3
+Geometría / Ángulos           MAT_PRI4_C2.1
+Medidas                       MAT_PRI4_C2.2
+Problemas                     MAT_PRI4_C3.1
+
+LENGUA CASTELLANA 4º/5º PRIMARIA:
+──────────────────────────────────
+Gramática, Verbos, Sustantivos    LEN_PRI4_C1.1 / LEN_PRI5_C1.1
+Ortografía, Acentuación           LEN_PRI4_C1.2 / LEN_PRI5_C1.2
+Comprensión Lectora               LEN_PRI4_C2.1 / LEN_PRI5_C2.1
+Redacción, Expresión              LEN_PRI4_C2.2 / LEN_PRI5_C2.2
+
+CIENCIAS SOCIALES 4º PRIMARIA:
+───────────────────────────────
+Geografía, Clima, Localidad      SOC_PRI4_C1.1
+Población                         SOC_PRI4_C1.2
+Historia, Edad Media              SOC_PRI4_C2.1
+Sectores Económicos               SOC_PRI4_C3.1
+
+CIENCIAS NATURALES 4º PRIMARIA:
+────────────────────────────────
+Animales, Seres Vivos             NAT_PRI4_C1.1
+Cuerpo Humano                     NAT_PRI4_C1.2
+Ecosistemas                       NAT_PRI4_C1.3
+Materia                           NAT_PRI4_C2.1
+Energía                           NAT_PRI4_C2.2
+Máquinas                          NAT_PRI4_C2.3
+
+═══════════════════════════════════════════════════════════
+
+REGLAS PARA FOCO PEDAGÓGICO:
+─────────────────────────────
+
+CONCEPTO → Preguntas que piden DEFINIR o EXPLICAR
+  Palabras clave: "¿Qué es...?", "Define...", "Explica..."
+  Ejemplo: "¿Qué es una fracción?"
+
+PROCEDIMIENTO → Preguntas que piden EJECUTAR pasos
+  Palabras clave: "Calcula...", "Resuelve...", "Suma...", "Escribe..."
+  Ejemplo: "Calcula 3/4 + 1/2"
+
+APLICACION → Problemas CONTEXTUALIZADOS
+  Palabras clave: Nombres propios, situaciones reales
+  Ejemplo: "Juan tiene 3/4 de pizza..."
+
+═══════════════════════════════════════════════════════════
+
+
+TEMAS ESPECÍFICOS ENCONTRADOS:
+────────────────────────────────
+Fracciones                          (Sin especificar)
+Problemas                           (Sin especificar)
+Lengua Castellana                   (Sin especificar)
+Ciencias de la Naturaleza           (Sin especificar)
+Ciencias Sociales                   (Sin especificar)
+Inglés                              (Sin especificar)
+Colors and Animals                  (Ciencias Naturales)
+Matemáticas                         (Sin especificar)
+Geografía - Material Libre          (Ciencias Sociales)

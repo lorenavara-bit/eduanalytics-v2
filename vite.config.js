@@ -8,4 +8,15 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  envPrefix: ['VITE_', 'REACT_APP_'],
+  server: {
+    proxy: {
+      '/api/sambanova': {
+        target: 'https://api.sambanova.ai/v1',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/sambanova/, ''),
+        secure: true
+      }
+    }
+  }
 })

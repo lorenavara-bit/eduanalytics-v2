@@ -1,0 +1,65 @@
+jest.mock('../supabaseClient', () => {
+    const mockSupabase = {
+        auth: {
+            getUser: jest.fn().mockResolvedValue({
+                data: { user: { id: 'test-user-id', email: 'test@example.com' } }
+            }),
+        },
+        from: jest.fn((table) => {
+            return {
+                select: jest.fn().mockImplementation(() => {
+                    if (table === 'students') {
+                        return {
+                            then: (cb) => cb({ data: [{ id: 'student-1', full_name: 'Test Student', education_level: 'primaria' }] }),
+                            eq: jest.fn().mockReturnThis(),
+                            single: jest.fn().mockResolvedValue({ data: null }),
+                            order: jest.fn().mockReturnThis(),
+                            limit: jest.fn().mockReturnThis(),
+                        };
+                    }
+                    if (table === 'user_subjects') {
+                        return Promise.resolve({ data: [{ id: 'sub-1', name: 'Matemáticas', education_level: 'primaria' }], error: null });
+                    }
+                    return Promise.resolve({ data: [], error: null });
+                }),
+                insert: jest.fn().mockResolvedValue({ data: null, error: null }),
+                update: jest.fn().mockResolvedValue({ data: null, error: null }),
+                delete: jest.fn().mockResolvedValue({ data: null, error: null }),
+            };
+        }),
+    };
+    return { supabase: mockSupabase };
+});
+
+import { render, screen, waitFor } from '@testing-library/react';
+import WorksheetGenerator from '../components/WorksheetGenerator';
+import { setupServer } from 'msw/node';
+import { rest } from 'msw';
+import realResponse from '../__fixtures__/worksheetResponse.json';
+import { BrowserRouter } from 'react-router-dom';
+
+// Configuramos MSW para interceptar la petición a la API de generación de worksheets
+const server = setupServer(
+    rest.post('/api/generate-worksheet', (req, res, ctx) => {
+        return res(ctx.json(realResponse));
+    })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+test('muestra la hoja generada usando datos reales (fixture)', async () => {
+    render(
+        <BrowserRouter>
+            <WorksheetGenerator subject="Ciencias Sociales" grade={4} />
+        </BrowserRouter>
+    );
+
+    // Esperamos a que desaparezca el spinner de carga
+    await waitFor(() => expect(screen.queryByTestId('spinner')).not.toBeInTheDocument());
+
+    // Verificamos que el contenido de la fixture está presente en la UI
+    expect(screen.getByText(/El clima de España/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Descargar PDF/i })).toBeInTheDocument();
+});

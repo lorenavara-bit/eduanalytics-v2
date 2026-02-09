@@ -1,0 +1,1238 @@
+{
+    "vocabulary": {
+        "sports": [
+            {
+                "english": "football",
+                "spanish": "fútbol"
+            },
+            {
+                "english": "basketball",
+                "spanish": "baloncesto"
+            },
+            {
+                "english": "swimming",
+                "spanish": "natación"
+            },
+            {
+                "english": "tennis",
+                "spanish": "tenis"
+            },
+            {
+                "english": "running",
+                "spanish": "correr"
+            },
+            {
+                "english": "cycling",
+                "spanish": "ciclismo"
+            },
+            {
+                "english": "volleyball",
+                "spanish": "voleibol"
+            },
+            {
+                "english": "baseball",
+                "spanish": "béisbol"
+            },
+            {
+                "english": "skiing",
+                "spanish": "esquí"
+            },
+            {
+                "english": "skating",
+                "spanish": "patinaje"
+            },
+            {
+                "english": "golf",
+                "spanish": "golf"
+            },
+            {
+                "english": "hockey",
+                "spanish": "hockey"
+            }
+        ],
+        "hobbies": [
+            {
+                "english": "reading",
+                "spanish": "leer"
+            },
+            {
+                "english": "dancing",
+                "spanish": "bailar"
+            },
+            {
+                "english": "painting",
+                "spanish": "pintar"
+            },
+            {
+                "english": "singing",
+                "spanish": "cantar"
+            },
+            {
+                "english": "drawing",
+                "spanish": "dibujar"
+            },
+            {
+                "english": "cooking",
+                "spanish": "cocinar"
+            },
+            {
+                "english": "playing",
+                "spanish": "jugar"
+            },
+            {
+                "english": "listening to music",
+                "spanish": "escuchar música"
+            },
+            {
+                "english": "watching TV",
+                "spanish": "ver la tele"
+            },
+            {
+                "english": "playing videogames",
+                "spanish": "jugar videojuegos"
+            },
+            {
+                "english": "gardening",
+                "spanish": "jardinería"
+            },
+            {
+                "english": "collecting stamps",
+                "spanish": "coleccionar sellos"
+            }
+        ],
+        "colors": [
+            {
+                "english": "red",
+                "spanish": "rojo"
+            },
+            {
+                "english": "blue",
+                "spanish": "azul"
+            },
+            {
+                "english": "green",
+                "spanish": "verde"
+            },
+            {
+                "english": "yellow",
+                "spanish": "amarillo"
+            },
+            {
+                "english": "brown",
+                "spanish": "marrón"
+            },
+            {
+                "english": "black",
+                "spanish": "negro"
+            },
+            {
+                "english": "white",
+                "spanish": "blanco"
+            },
+            {
+                "english": "orange",
+                "spanish": "naranja"
+            },
+            {
+                "english": "purple",
+                "spanish": "morado"
+            },
+            {
+                "english": "pink",
+                "spanish": "rosa"
+            },
+            {
+                "english": "grey",
+                "spanish": "gris"
+            },
+            {
+                "english": "gold",
+                "spanish": "dorado"
+            },
+            {
+                "english": "silver",
+                "spanish": "plateado"
+            }
+        ],
+        "family": [
+            {
+                "english": "mother",
+                "spanish": "madre"
+            },
+            {
+                "english": "father",
+                "spanish": "padre"
+            },
+            {
+                "english": "sister",
+                "spanish": "hermana"
+            },
+            {
+                "english": "brother",
+                "spanish": "hermano"
+            },
+            {
+                "english": "grandmother",
+                "spanish": "abuela"
+            },
+            {
+                "english": "grandfather",
+                "spanish": "abuelo"
+            },
+            {
+                "english": "aunt",
+                "spanish": "tía"
+            },
+            {
+                "english": "uncle",
+                "spanish": "tío"
+            },
+            {
+                "english": "cousin",
+                "spanish": "primo/prima"
+            },
+            {
+                "english": "parents",
+                "spanish": "padres"
+            },
+            {
+                "english": "son",
+                "spanish": "hijo"
+            },
+            {
+                "english": "daughter",
+                "spanish": "hija"
+            },
+            {
+                "english": "baby",
+                "spanish": "bebé"
+            },
+            {
+                "english": "child",
+                "spanish": "niño/niña"
+            }
+        ],
+        "body": [
+            {
+                "english": "head",
+                "spanish": "cabeza"
+            },
+            {
+                "english": "eyes",
+                "spanish": "ojos"
+            },
+            {
+                "english": "nose",
+                "spanish": "nariz"
+            },
+            {
+                "english": "mouth",
+                "spanish": "boca"
+            },
+            {
+                "english": "ears",
+                "spanish": "orejas"
+            },
+            {
+                "english": "hands",
+                "spanish": "manos"
+            },
+            {
+                "english": "feet",
+                "spanish": "pies"
+            },
+            {
+                "english": "legs",
+                "spanish": "piernas"
+            },
+            {
+                "english": "arms",
+                "spanish": "brazos"
+            },
+            {
+                "english": "fingers",
+                "spanish": "dedos"
+            },
+            {
+                "english": "hair",
+                "spanish": "pelo"
+            },
+            {
+                "english": "face",
+                "spanish": "cara"
+            },
+            {
+                "english": "teeth",
+                "spanish": "dientes"
+            },
+            {
+                "english": "neck",
+                "spanish": "cuello"
+            },
+            {
+                "english": "stomach",
+                "spanish": "estómago"
+            }
+        ],
+        "animals": [
+            {
+                "english": "cat",
+                "spanish": "gato"
+            },
+            {
+                "english": "dog",
+                "spanish": "perro"
+            },
+            {
+                "english": "bird",
+                "spanish": "pájaro"
+            },
+            {
+                "english": "fish",
+                "spanish": "pez"
+            },
+            {
+                "english": "horse",
+                "spanish": "caballo"
+            },
+            {
+                "english": "cow",
+                "spanish": "vaca"
+            },
+            {
+                "english": "pig",
+                "spanish": "cerdo"
+            },
+            {
+                "english": "sheep",
+                "spanish": "oveja"
+            },
+            {
+                "english": "chicken",
+                "spanish": "gallina"
+            },
+            {
+                "english": "duck",
+                "spanish": "pato"
+            },
+            {
+                "english": "rabbit",
+                "spanish": "conejo"
+            },
+            {
+                "english": "mouse",
+                "spanish": "ratón"
+            },
+            {
+                "english": "elephant",
+                "spanish": "elefante"
+            },
+            {
+                "english": "lion",
+                "spanish": "león"
+            },
+            {
+                "english": "tiger",
+                "spanish": "tigre"
+            },
+            {
+                "english": "monkey",
+                "spanish": "mono"
+            },
+            {
+                "english": "bear",
+                "spanish": "oso"
+            },
+            {
+                "english": "giraffe",
+                "spanish": "jirafa"
+            },
+            {
+                "english": "zebra",
+                "spanish": "cebra"
+            },
+            {
+                "english": "snake",
+                "spanish": "serpiente"
+            }
+        ],
+        "school": [
+            {
+                "english": "pencil",
+                "spanish": "lápiz"
+            },
+            {
+                "english": "pen",
+                "spanish": "bolígrafo"
+            },
+            {
+                "english": "book",
+                "spanish": "libro"
+            },
+            {
+                "english": "notebook",
+                "spanish": "cuaderno"
+            },
+            {
+                "english": "eraser",
+                "spanish": "goma"
+            },
+            {
+                "english": "ruler",
+                "spanish": "regla"
+            },
+            {
+                "english": "scissors",
+                "spanish": "tijeras"
+            },
+            {
+                "english": "glue",
+                "spanish": "pegamento"
+            },
+            {
+                "english": "chair",
+                "spanish": "silla"
+            },
+            {
+                "english": "table",
+                "spanish": "mesa"
+            },
+            {
+                "english": "desk",
+                "spanish": "pupitre"
+            },
+            {
+                "english": "board",
+                "spanish": "pizarra"
+            },
+            {
+                "english": "teacher",
+                "spanish": "profesor/a"
+            },
+            {
+                "english": "student",
+                "spanish": "estudiante"
+            },
+            {
+                "english": "classroom",
+                "spanish": "aula"
+            },
+            {
+                "english": "school",
+                "spanish": "colegio"
+            },
+            {
+                "english": "bag",
+                "spanish": "mochila"
+            }
+        ],
+        "food": [
+            {
+                "english": "apple",
+                "spanish": "manzana"
+            },
+            {
+                "english": "banana",
+                "spanish": "plátano"
+            },
+            {
+                "english": "orange",
+                "spanish": "naranja"
+            },
+            {
+                "english": "pear",
+                "spanish": "pera"
+            },
+            {
+                "english": "strawberry",
+                "spanish": "fresa"
+            },
+            {
+                "english": "grapes",
+                "spanish": "uvas"
+            },
+            {
+                "english": "watermelon",
+                "spanish": "sandía"
+            },
+            {
+                "english": "peach",
+                "spanish": "melocotón"
+            },
+            {
+                "english": "lemon",
+                "spanish": "limón"
+            },
+            {
+                "english": "tomato",
+                "spanish": "tomate"
+            },
+            {
+                "english": "carrot",
+                "spanish": "zanahoria"
+            },
+            {
+                "english": "potato",
+                "spanish": "patata"
+            },
+            {
+                "english": "onion",
+                "spanish": "cebolla"
+            },
+            {
+                "english": "lettuce",
+                "spanish": "lechuga"
+            },
+            {
+                "english": "bread",
+                "spanish": "pan"
+            },
+            {
+                "english": "cheese",
+                "spanish": "queso"
+            },
+            {
+                "english": "butter",
+                "spanish": "mantequilla"
+            },
+            {
+                "english": "milk",
+                "spanish": "leche"
+            },
+            {
+                "english": "water",
+                "spanish": "agua"
+            },
+            {
+                "english": "juice",
+                "spanish": "zumo"
+            },
+            {
+                "english": "coffee",
+                "spanish": "café"
+            },
+            {
+                "english": "tea",
+                "spanish": "té"
+            },
+            {
+                "english": "chocolate",
+                "spanish": "chocolate"
+            },
+            {
+                "english": "cake",
+                "spanish": "tarta"
+            },
+            {
+                "english": "cookie",
+                "spanish": "galleta"
+            },
+            {
+                "english": "ice cream",
+                "spanish": "helado"
+            },
+            {
+                "english": "egg",
+                "spanish": "huevo"
+            },
+            {
+                "english": "rice",
+                "spanish": "arroz"
+            },
+            {
+                "english": "pasta",
+                "spanish": "pasta"
+            },
+            {
+                "english": "chicken",
+                "spanish": "pollo"
+            },
+            {
+                "english": "fish",
+                "spanish": "pescado"
+            },
+            {
+                "english": "meat",
+                "spanish": "carne"
+            },
+            {
+                "english": "soup",
+                "spanish": "sopa"
+            },
+            {
+                "english": "salad",
+                "spanish": "ensalada"
+            },
+            {
+                "english": "pizza",
+                "spanish": "pizza"
+            },
+            {
+                "english": "hamburger",
+                "spanish": "hamburguesa"
+            }
+        ],
+        "house": [
+            {
+                "english": "house",
+                "spanish": "casa"
+            },
+            {
+                "english": "door",
+                "spanish": "puerta"
+            },
+            {
+                "english": "window",
+                "spanish": "ventana"
+            },
+            {
+                "english": "room",
+                "spanish": "habitación"
+            },
+            {
+                "english": "bedroom",
+                "spanish": "dormitorio"
+            },
+            {
+                "english": "kitchen",
+                "spanish": "cocina"
+            },
+            {
+                "english": "bathroom",
+                "spanish": "baño"
+            },
+            {
+                "english": "living room",
+                "spanish": "salón"
+            },
+            {
+                "english": "garden",
+                "spanish": "jardín"
+            },
+            {
+                "english": "roof",
+                "spanish": "tejado"
+            },
+            {
+                "english": "floor",
+                "spanish": "suelo"
+            },
+            {
+                "english": "wall",
+                "spanish": "pared"
+            },
+            {
+                "english": "bed",
+                "spanish": "cama"
+            },
+            {
+                "english": "sofa",
+                "spanish": "sofá"
+            },
+            {
+                "english": "lamp",
+                "spanish": "lámpara"
+            },
+            {
+                "english": "mirror",
+                "spanish": "espejo"
+            }
+        ],
+        "clothes": [
+            {
+                "english": "shirt",
+                "spanish": "camisa"
+            },
+            {
+                "english": "t-shirt",
+                "spanish": "camiseta"
+            },
+            {
+                "english": "trousers",
+                "spanish": "pantalones"
+            },
+            {
+                "english": "jeans",
+                "spanish": "vaqueros"
+            },
+            {
+                "english": "skirt",
+                "spanish": "falda"
+            },
+            {
+                "english": "dress",
+                "spanish": "vestido"
+            },
+            {
+                "english": "shoes",
+                "spanish": "zapatos"
+            },
+            {
+                "english": "socks",
+                "spanish": "calcetines"
+            },
+            {
+                "english": "coat",
+                "spanish": "abrigo"
+            },
+            {
+                "english": "jacket",
+                "spanish": "chaqueta"
+            },
+            {
+                "english": "hat",
+                "spanish": "sombrero"
+            },
+            {
+                "english": "cap",
+                "spanish": "gorra"
+            },
+            {
+                "english": "scarf",
+                "spanish": "bufanda"
+            },
+            {
+                "english": "gloves",
+                "spanish": "guantes"
+            }
+        ],
+        "nature": [
+            {
+                "english": "sun",
+                "spanish": "sol"
+            },
+            {
+                "english": "moon",
+                "spanish": "luna"
+            },
+            {
+                "english": "star",
+                "spanish": "estrella"
+            },
+            {
+                "english": "sky",
+                "spanish": "cielo"
+            },
+            {
+                "english": "cloud",
+                "spanish": "nube"
+            },
+            {
+                "english": "rain",
+                "spanish": "lluvia"
+            },
+            {
+                "english": "snow",
+                "spanish": "nieve"
+            },
+            {
+                "english": "wind",
+                "spanish": "viento"
+            },
+            {
+                "english": "tree",
+                "spanish": "árbol"
+            },
+            {
+                "english": "flower",
+                "spanish": "flor"
+            },
+            {
+                "english": "grass",
+                "spanish": "hierba"
+            },
+            {
+                "english": "mountain",
+                "spanish": "montaña"
+            },
+            {
+                "english": "river",
+                "spanish": "río"
+            },
+            {
+                "english": "sea",
+                "spanish": "mar"
+            },
+            {
+                "english": "beach",
+                "spanish": "playa"
+            }
+        ],
+        "transport": [
+            {
+                "english": "car",
+                "spanish": "coche"
+            },
+            {
+                "english": "bus",
+                "spanish": "autobús"
+            },
+            {
+                "english": "train",
+                "spanish": "tren"
+            },
+            {
+                "english": "plane",
+                "spanish": "avión"
+            },
+            {
+                "english": "boat",
+                "spanish": "barco"
+            },
+            {
+                "english": "ship",
+                "spanish": "barco grande"
+            },
+            {
+                "english": "bicycle",
+                "spanish": "bicicleta"
+            },
+            {
+                "english": "bike",
+                "spanish": "bici"
+            },
+            {
+                "english": "motorcycle",
+                "spanish": "moto"
+            },
+            {
+                "english": "motorbike",
+                "spanish": "moto"
+            },
+            {
+                "english": "taxi",
+                "spanish": "taxi"
+            },
+            {
+                "english": "helicopter",
+                "spanish": "helicóptero"
+            },
+            {
+                "english": "lorry",
+                "spanish": "camión"
+            }
+        ],
+        "numbers": [
+            {
+                "english": "one",
+                "spanish": "uno"
+            },
+            {
+                "english": "two",
+                "spanish": "dos"
+            },
+            {
+                "english": "three",
+                "spanish": "tres"
+            },
+            {
+                "english": "four",
+                "spanish": "cuatro"
+            },
+            {
+                "english": "five",
+                "spanish": "cinco"
+            },
+            {
+                "english": "six",
+                "spanish": "seis"
+            },
+            {
+                "english": "seven",
+                "spanish": "siete"
+            },
+            {
+                "english": "eight",
+                "spanish": "ocho"
+            },
+            {
+                "english": "nine",
+                "spanish": "nueve"
+            },
+            {
+                "english": "ten",
+                "spanish": "diez"
+            },
+            {
+                "english": "eleven",
+                "spanish": "once"
+            },
+            {
+                "english": "twelve",
+                "spanish": "doce"
+            },
+            {
+                "english": "thirteen",
+                "spanish": "trece"
+            },
+            {
+                "english": "fourteen",
+                "spanish": "catorce"
+            },
+            {
+                "english": "fifteen",
+                "spanish": "quince"
+            },
+            {
+                "english": "twenty",
+                "spanish": "veinte"
+            },
+            {
+                "english": "thirty",
+                "spanish": "treinta"
+            },
+            {
+                "english": "forty",
+                "spanish": "cuarenta"
+            },
+            {
+                "english": "fifty",
+                "spanish": "cincuenta"
+            },
+            {
+                "english": "hundred",
+                "spanish": "cien"
+            }
+        ],
+        "time": [
+            {
+                "english": "Monday",
+                "spanish": "lunes"
+            },
+            {
+                "english": "Tuesday",
+                "spanish": "martes"
+            },
+            {
+                "english": "Wednesday",
+                "spanish": "miércoles"
+            },
+            {
+                "english": "Thursday",
+                "spanish": "jueves"
+            },
+            {
+                "english": "Friday",
+                "spanish": "viernes"
+            },
+            {
+                "english": "Saturday",
+                "spanish": "sábado"
+            },
+            {
+                "english": "Sunday",
+                "spanish": "domingo"
+            },
+            {
+                "english": "January",
+                "spanish": "enero"
+            },
+            {
+                "english": "February",
+                "spanish": "febrero"
+            },
+            {
+                "english": "March",
+                "spanish": "marzo"
+            },
+            {
+                "english": "April",
+                "spanish": "abril"
+            },
+            {
+                "english": "May",
+                "spanish": "mayo"
+            },
+            {
+                "english": "June",
+                "spanish": "junio"
+            },
+            {
+                "english": "July",
+                "spanish": "julio"
+            },
+            {
+                "english": "August",
+                "spanish": "agosto"
+            },
+            {
+                "english": "September",
+                "spanish": "septiembre"
+            },
+            {
+                "english": "October",
+                "spanish": "octubre"
+            },
+            {
+                "english": "November",
+                "spanish": "noviembre"
+            },
+            {
+                "english": "December",
+                "spanish": "diciembre"
+            },
+            {
+                "english": "today",
+                "spanish": "hoy"
+            },
+            {
+                "english": "yesterday",
+                "spanish": "ayer"
+            },
+            {
+                "english": "tomorrow",
+                "spanish": "mañana"
+            },
+            {
+                "english": "morning",
+                "spanish": "mañana"
+            },
+            {
+                "english": "afternoon",
+                "spanish": "tarde"
+            },
+            {
+                "english": "night",
+                "spanish": "noche"
+            }
+        ],
+        "daily_routines": [
+            {
+                "english": "wake up",
+                "spanish": "despertarse"
+            },
+            {
+                "english": "get up",
+                "spanish": "levantarse"
+            },
+            {
+                "english": "brush teeth",
+                "spanish": "cepillarse los dientes"
+            },
+            {
+                "english": "wash face",
+                "spanish": "lavarse la cara"
+            },
+            {
+                "english": "have breakfast",
+                "spanish": "desayunar"
+            },
+            {
+                "english": "go to school",
+                "spanish": "ir al colegio"
+            },
+            {
+                "english": "have lunch",
+                "spanish": "almorzar"
+            },
+            {
+                "english": "do homework",
+                "spanish": "hacer los deberes"
+            },
+            {
+                "english": "have dinner",
+                "spanish": "cenar"
+            },
+            {
+                "english": "go to bed",
+                "spanish": "irse a la cama"
+            },
+            {
+                "english": "sleep",
+                "spanish": "dormir"
+            },
+            {
+                "english": "study",
+                "spanish": "estudiar"
+            },
+            {
+                "english": "play",
+                "spanish": "jugar"
+            },
+            {
+                "english": "watch TV",
+                "spanish": "ver la televisión"
+            },
+            {
+                "english": "have a shower",
+                "spanish": "ducharse"
+            },
+            {
+                "english": "get dressed",
+                "spanish": "vestirse"
+            },
+            {
+                "english": "comb hair",
+                "spanish": "peinarse"
+            },
+            {
+                "english": "have a snack",
+                "spanish": "merendar"
+            }
+        ],
+        "prepositions_place": [
+            {
+                "english": "in",
+                "spanish": "dentro de"
+            },
+            {
+                "english": "on",
+                "spanish": "encima de"
+            },
+            {
+                "english": "under",
+                "spanish": "debajo de"
+            },
+            {
+                "english": "behind",
+                "spanish": "detrás de"
+            },
+            {
+                "english": "in front of",
+                "spanish": "delante de"
+            },
+            {
+                "english": "next to",
+                "spanish": "al lado de"
+            },
+            {
+                "english": "between",
+                "spanish": "entre"
+            },
+            {
+                "english": "near",
+                "spanish": "cerca de"
+            },
+            {
+                "english": "opposite",
+                "spanish": "enfrente de"
+            },
+            {
+                "english": "above",
+                "spanish": "por encima de"
+            },
+            {
+                "english": "below",
+                "spanish": "por debajo de"
+            }
+        ],
+        "prepositions_time": [
+            {
+                "english": "at",
+                "spanish": "a las (horas)"
+            },
+            {
+                "english": "in",
+                "spanish": "en (meses/años)"
+            },
+            {
+                "english": "on",
+                "spanish": "el (días)"
+            },
+            {
+                "english": "before",
+                "spanish": "antes"
+            },
+            {
+                "english": "after",
+                "spanish": "después"
+            },
+            {
+                "english": "during",
+                "spanish": "durante"
+            },
+            {
+                "english": "until",
+                "spanish": "hasta"
+            }
+        ],
+        "city": [
+            {
+                "english": "school",
+                "spanish": "colegio"
+            },
+            {
+                "english": "park",
+                "spanish": "parque"
+            },
+            {
+                "english": "hospital",
+                "spanish": "hospital"
+            },
+            {
+                "english": "supermarket",
+                "spanish": "supermercado"
+            },
+            {
+                "english": "library",
+                "spanish": "biblioteca"
+            },
+            {
+                "english": "shop",
+                "spanish": "tienda"
+            },
+            {
+                "english": "cinema",
+                "spanish": "cine"
+            },
+            {
+                "english": "restaurant",
+                "spanish": "restaurante"
+            },
+            {
+                "english": "museum",
+                "spanish": "museo"
+            },
+            {
+                "english": "street",
+                "spanish": "calle"
+            },
+            {
+                "english": "house",
+                "spanish": "casa"
+            }
+        ],
+        "professions": [
+            {
+                "english": "teacher",
+                "spanish": "profesor/a"
+            },
+            {
+                "english": "doctor",
+                "spanish": "médico/a"
+            },
+            {
+                "english": "nurse",
+                "spanish": "enfermero/a"
+            },
+            {
+                "english": "police officer",
+                "spanish": "policía"
+            },
+            {
+                "english": "firefighter",
+                "spanish": "bombero"
+            },
+            {
+                "english": "farmer",
+                "spanish": "granjero/a"
+            },
+            {
+                "english": "cook",
+                "spanish": "cocinero/a"
+            },
+            {
+                "english": "vet",
+                "spanish": "veterinario/a"
+            },
+            {
+                "english": "singer",
+                "spanish": "cantante"
+            },
+            {
+                "english": "actor",
+                "spanish": "actor/actriz"
+            }
+        ]
+    }
+}

@@ -1,0 +1,42 @@
+import React from 'react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import EarlyDetectionPrimary from '../components/EarlyDetectionPrimary';
+
+// Mock supabase client used inside the component
+jest.mock('../supabaseClient', () => ({
+    supabase: {
+        from: () => ({
+            insert: jest.fn().mockResolvedValue({ error: null })
+        })
+    }
+}));
+
+describe('EarlyDetectionPrimary integration test', () => {
+    const studentId = 'test-student-123';
+    const onComplete = jest.fn();
+
+    test('completes questionnaire and shows high‑risk results', async () => {
+        render(<EarlyDetectionPrimary studentId={studentId} onComplete={onComplete} />);
+
+        // Step 0 -> click "Comenzar Evaluación"
+        const startBtn = screen.getByRole('button', { name: /Comenzar Evaluación/i });
+        fireEvent.click(startBtn);
+
+        // Answer all 12 questions with the highest option (index 3) to trigger HIGH risk
+        for (let i = 0; i < 12; i++) {
+            // Wait for the next question to appear
+            const optionBtn = await screen.findByRole('button', { name: /Casi siempre/i });
+            fireEvent.click(optionBtn);
+        }
+
+        // After last answer component shows loading spinner, then result
+        await waitFor(() => expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(), { timeout: 5000 });
+
+        // Verify that a HIGH risk card is rendered (red background)
+        const highRiskCard = screen.getByText(/ALTA/i);
+        expect(highRiskCard).toBeInTheDocument();
+        // Verify that recommendations are shown
+        expect(screen.getByText(/Se recomienda encarecidamente una evaluación especializada/i)).toBeInTheDocument();
+    });
+});

@@ -1,0 +1,497 @@
+
+╔═══════════════════════════════════════════════════════════╗
+║           SUGERENCIAS AUTOMÁTICAS                        ║
+╚═══════════════════════════════════════════════════════════╝
+
+
+1. ID: cuarto-primaria-galicia-PARTE1_38
+   Pregunta: "¿Qué fracción representa la mitad?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: MAT_PRI4_C1.2
+
+2. ID: cuarto-primaria-galicia-PARTE1_39
+   Pregunta: "¿Qué fracción representa un cuarto?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: MAT_PRI4_C1.2
+
+3. ID: cuarto-primaria-galicia-PARTE1_42
+   Pregunta: "Si coloreas 2 partes de 4, ¿qué fracción has coloreado?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: MAT_PRI4_C1.2
+
+4. ID: cuarto-primaria-galicia-PARTE1_45
+   Pregunta: "¿Qué fracción representa un tercio?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: MAT_PRI4_C1.2
+
+5. ID: cuarto-primaria-galicia-PARTE1_48
+   Pregunta: "Si juntas 1/4 + 1/4, ¿qué fracción tienes?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: MAT_PRI4_C1.2
+
+6. ID: cuarto-primaria-galicia-PARTE1_54
+   Pregunta: "Una película dura 2 horas y 15 minutos. Si empieza a las 4:30, ¿a qué hora termi..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+7. ID: cuarto-primaria-galicia-PARTE1_69
+   Pregunta: "Separa correctamente: "Micasaesgrande"..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+8. ID: cuarto-primaria-galicia-PARTE1_70
+   Pregunta: "Añade el punto: "Hoy hace buen día"..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+9. ID: cuarto-primaria-galicia-PARTE1_71
+   Pregunta: "Añade comas: "Compré pan leche queso y jamón"..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+10. ID: cuarto-primaria-galicia-PARTE1_72
+   Pregunta: "¿Cuál lleva tilde: "Ratón" o "Mesa"?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+11. ID: cuarto-primaria-galicia-PARTE2_1
+   Pregunta: "¿Cuáles son las 3 funciones vitales de los seres vivos?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+12. ID: cuarto-primaria-galicia-PARTE2_2
+   Pregunta: "Di 3 animales vertebrados..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+13. ID: cuarto-primaria-galicia-PARTE2_3
+   Pregunta: "¿Qué necesitan las plantas para hacer la fotosíntesis?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+14. ID: cuarto-primaria-galicia-PARTE2_4
+   Pregunta: "Ordena la cadena: León, cebra, hierba..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+15. ID: cuarto-primaria-galicia-PARTE2_5
+   Pregunta: "Di 2 animales herbívoros..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+16. ID: cuarto-primaria-galicia-PARTE2_6
+   Pregunta: "Di 2 animales carnívoros..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+17. ID: cuarto-primaria-galicia-PARTE2_7
+   Pregunta: "¿Qué come un animal omnívoro?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+18. ID: cuarto-primaria-galicia-PARTE2_8
+   Pregunta: "¿Cuáles son las partes principales de una planta?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+19. ID: cuarto-primaria-galicia-PARTE2_9
+   Pregunta: "Di un animal típico de los bosques gallegos..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+20. ID: cuarto-primaria-galicia-PARTE2_11
+   Pregunta: "¿Qué gas respiramos las personas?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+21. ID: cuarto-primaria-galicia-PARTE2_12
+   Pregunta: "Di 2 animales que nacen de huevo..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+22. ID: cuarto-primaria-galicia-PARTE2_38
+   Pregunta: "Di las 4 provincias de Galicia..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+23. ID: cuarto-primaria-galicia-PARTE2_39
+   Pregunta: "Di 2 ríos de Galicia..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+24. ID: cuarto-primaria-galicia-PARTE2_40
+   Pregunta: "¿Qué mar baña Galicia?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+25. ID: cuarto-primaria-galicia-PARTE2_41
+   Pregunta: "Di 3 ciudades importantes de Galicia..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+26. ID: cuarto-primaria-galicia-PARTE2_42
+   Pregunta: "¿A dónde llega el Camino de Santiago?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+27. ID: cuarto-primaria-galicia-PARTE2_43
+   Pregunta: "¿De qué colores es la bandera de Galicia?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+28. ID: cuarto-primaria-galicia-PARTE2_44
+   Pregunta: "Di 2 platos típicos de Galicia..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+29. ID: cuarto-primaria-galicia-PARTE2_45
+   Pregunta: "¿Cuándo es el Día de Galicia?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+30. ID: cuarto-primaria-galicia-PARTE2_46
+   Pregunta: "Di un paisaje típico de Galicia..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+31. ID: cuarto-primaria-galicia-PARTE2_47
+   Pregunta: "¿Qué instrumento musical es típico de Galicia?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+32. ID: cuarto-primaria-galicia-PARTE2_48
+   Pregunta: "¿Cómo se llamaban los antiguos habitantes de Galicia?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+33. ID: cuarto-primaria-galicia-PARTE2_61
+   Pregunta: "How do you say "cinco" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+34. ID: cuarto-primaria-galicia-PARTE2_62
+   Pregunta: "How do you say "quince" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+35. ID: cuarto-primaria-galicia-PARTE2_63
+   Pregunta: "Count from 1 to 5 in English..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+36. ID: cuarto-primaria-galicia-PARTE2_64
+   Pregunta: "Complete: "How ______ apples?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+37. ID: cuarto-primaria-galicia-PARTE2_65
+   Pregunta: "How do you say "treinta" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+38. ID: cuarto-primaria-galicia-PARTE2_67
+   Pregunta: "How do you say "primero" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+39. ID: cuarto-primaria-galicia-PARTE2_68
+   Pregunta: "How do you say "segundo" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+40. ID: cuarto-primaria-galicia-PARTE2_69
+   Pregunta: "How do you say "tercero" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+41. ID: cuarto-primaria-galicia-PARTE2_71
+   Pregunta: "How do you say "rojo" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+42. ID: cuarto-primaria-galicia-PARTE2_72
+   Pregunta: "How do you say "azul" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+43. ID: cuarto-primaria-galicia-PARTE2_73
+   Pregunta: "How do you say "perro" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+44. ID: cuarto-primaria-galicia-PARTE2_74
+   Pregunta: "How do you say "gato" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+45. ID: cuarto-primaria-galicia-PARTE2_75
+   Pregunta: "Name 3 farm animals in English..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+46. ID: cuarto-primaria-galicia-PARTE2_76
+   Pregunta: "How do you say "león" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+47. ID: cuarto-primaria-galicia-PARTE2_77
+   Pregunta: "How do you ask "¿Tienes mascota?"..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+48. ID: cuarto-primaria-galicia-PARTE2_78
+   Pregunta: "Complete: "My cat is ______" (negro)..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+49. ID: cuarto-primaria-galicia-PARTE2_79
+   Pregunta: "How do you say "grande" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+50. ID: cuarto-primaria-galicia-PARTE2_80
+   Pregunta: "How do you say "pequeño" in English?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+51. ID: cuarto-primaria-galicia-PARTE2_81
+   Pregunta: "How do you say "Me gustan los perros"?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+52. ID: EJEMPLO-EJERCICIOS-NC_4
+   Pregunta: "¿Cuánto es 1/2 + 1/4?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+53. ID: EJEMPLO-EJERCICIOS-NC_1
+   Pregunta: "¿Quién descubrió América?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+54. ID: EJEMPLO-EJERCICIOS-NC_2
+   Pregunta: "¿Cuál fue la primera civilización de la Península Ibérica?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+55. ID: EJEMPLO-EJERCICIOS-NC_3
+   Pregunta: "¿Cuál es el río más largo de España?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: SOC_PRI4_C1.1
+
+56. ID: cuarto-primaria-galicia-PARTE1_1
+   Pregunta: "Calcula: 7 × 8..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+57. ID: cuarto-primaria-galicia-PARTE1_2
+   Pregunta: "Calcula: 34 × 10..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+58. ID: cuarto-primaria-galicia-PARTE1_3
+   Pregunta: "Calcula: 25 × 100..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+59. ID: cuarto-primaria-galicia-PARTE1_4
+   Pregunta: "Calcula: 23 × 12..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+60. ID: cuarto-primaria-galicia-PARTE1_5
+   Pregunta: "En una caja hay 24 lápices. Si compras 5 cajas, ¿cuántos lápices tienes?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+61. ID: cuarto-primaria-galicia-PARTE1_6
+   Pregunta: "Calcula: 47 × 6..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+62. ID: cuarto-primaria-galicia-PARTE1_10
+   Pregunta: "Un paquete de cromos cuesta 3€. Si compras 15 paquetes, ¿cuánto pagas?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+63. ID: cuarto-primaria-galicia-PARTE1_11
+   Pregunta: "Calcula: 18 × 5..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+64. ID: cuarto-primaria-galicia-PARTE1_37
+   Pregunta: "Si divides una tarta en 8 partes y coges 3, ¿qué fracción has cogido?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: MAT_PRI4_C1.2
+
+65. ID: cuarto-primaria-galicia-PARTE1_41
+   Pregunta: "¿Cuánto es 1/2 de 10 caramelos?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: MAT_PRI4_C1.2
+
+66. ID: cuarto-primaria-galicia-PARTE1_43
+   Pregunta: "Una pizza está dividida en 6 trozos. Te comes 2, ¿qué fracción te has comido?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: MAT_PRI4_C1.2
+
+67. ID: cuarto-primaria-galicia-PARTE1_44
+   Pregunta: "¿Cuántos cuartos hay en una mitad?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: MAT_PRI4_C1.2
+
+68. ID: cuarto-primaria-galicia-PARTE1_46
+   Pregunta: "En una clase de 24 niños, 1/4 son rubios. ¿Cuántos niños son rubios?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: MAT_PRI4_C1.2
+
+69. ID: cuarto-primaria-galicia-PARTE1_49
+   Pregunta: "María tiene 145 cromos y su hermano 87. ¿Cuántos tienen entre los dos?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+70. ID: cuarto-primaria-galicia-PARTE1_50
+   Pregunta: "En una tienda había 500 caramelos. Vendieron 237. ¿Cuántos quedan?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+71. ID: cuarto-primaria-galicia-PARTE1_51
+   Pregunta: "Un paquete de galletas cuesta 2€. ¿Cuánto cuestan 12 paquetes?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+72. ID: cuarto-primaria-galicia-PARTE1_52
+   Pregunta: "Reparte 60 gominolas entre 5 niños. ¿Cuántas le tocan a cada uno?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+73. ID: cuarto-primaria-galicia-PARTE1_53
+   Pregunta: "Compras 3 libros a 8€ cada uno. Pagas con un billete de 50€. ¿Cuánto te devuelve..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+74. ID: cuarto-primaria-galicia-PARTE1_55
+   Pregunta: "Tienes 3 monedas de 2€ y 5 monedas de 1€. ¿Cuánto dinero tienes?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+75. ID: cuarto-primaria-galicia-PARTE1_56
+   Pregunta: "Un lápiz mide 18 cm. ¿Cuánto miden 4 lápices puestos en fila?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+76. ID: cuarto-primaria-galicia-PARTE1_57
+   Pregunta: "Ana tiene 156 cromos y Luis 98. ¿Cuántos cromos más tiene Ana?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+77. ID: cuarto-primaria-galicia-PARTE1_58
+   Pregunta: "Tienes 50€. Gastas 18€ en un juego y 12€ en un libro. ¿Cuánto te queda?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+78. ID: cuarto-primaria-galicia-PARTE1_59
+   Pregunta: "Si 6 bolígrafos cuestan 18€, ¿cuánto cuesta cada bolígrafo?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+79. ID: cuarto-primaria-galicia-PARTE1_60
+   Pregunta: "En una granja hay 25 gallinas. Cada gallina pone 6 huevos a la semana. ¿Cuántos ..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+80. ID: cuarto-primaria-galicia-PARTE1_61
+   Pregunta: "Escribe correctamente: "mi primo pablo vive en santiago"..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+81. ID: cuarto-primaria-galicia-PARTE1_62
+   Pregunta: "¿Cómo se escribe: ca_po o ca_bo?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+82. ID: cuarto-primaria-galicia-PARTE1_63
+   Pregunta: "¿Cómo se escribe: pue_lo o pue_ro?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+83. ID: cuarto-primaria-galicia-PARTE1_64
+   Pregunta: "Escribe correctamente: "Donde vives"..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+84. ID: cuarto-primaria-galicia-PARTE1_65
+   Pregunta: "Escribe correctamente: "Que bonito"..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+85. ID: cuarto-primaria-galicia-PARTE1_66
+   Pregunta: "¿Cómo se escribe: _uevo o _ueso?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+86. ID: cuarto-primaria-galicia-PARTE1_67
+   Pregunta: "¿Cómo se escribe: _irafa o _irafa?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+87. ID: cuarto-primaria-galicia-PARTE1_68
+   Pregunta: "¿Cómo se escribe: _ereza o _ereza?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+88. ID: cuarto-primaria-galicia-PARTE2_66
+   Pregunta: "How do you ask "¿Cuántos años tienes?"..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+89. ID: cuarto-primaria-galicia-PARTE2_70
+   Pregunta: "How do you ask "¿Cuánto cuesta?"..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+90. ID: cuarto-primaria-galicia-PARTE1_7
+   Pregunta: "¿Cuál es el triple de 25?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+91. ID: cuarto-primaria-galicia-PARTE1_8
+   Pregunta: "¿Cuál es el doble de 38?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+92. ID: cuarto-primaria-galicia-PARTE1_9
+   Pregunta: "Si 8 × ? = 72, ¿cuál es el número que falta?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+93. ID: cuarto-primaria-galicia-PARTE1_12
+   Pregunta: "¿Qué es mayor: 6 × 8 o 7 × 7?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+94. ID: cuarto-primaria-galicia-PARTE1_40
+   Pregunta: "¿Qué es mayor: 1/2 o 1/4?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: MAT_PRI4_C1.2
+
+95. ID: cuarto-primaria-galicia-PARTE1_47
+   Pregunta: "¿Qué es mayor: 2/3 o 1/2?..."
+   Problema: Sin criterio LOMLOE
+   → Sugerencia: MAT_PRI4_C1.2
+
+96. ID: cuarto-primaria-galicia-PARTE2_10
+   Pregunta: "¿Qué es un ecosistema?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+97. ID: cuarto-primaria-galicia-PARTE2_37
+   Pregunta: "¿Cuál es la capital de Galicia?..."
+   Problema: Sin criterio LOMLOE
+   → Consultar guia_referencia.txt
+
+═══════════════════════════════════════════════════════════
+
+Total sugerencias: 97
+
+NOTA: Estas son sugerencias automáticas. Siempre verifica
+      manualmente antes de aplicar.

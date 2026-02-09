@@ -1,0 +1,32 @@
+// CORRECCIÓN: Añadir esto después de la línea 225 en deterministic-integration.js
+// Reemplazar el bloque if/else entre líneas 211-225 con esto:
+
+    // Detectar categoría específica de vocabulario
+    if (topicLower.includes('food') || topicLower.includes('comida') || topicLower.includes('drink') || topicLower.includes('bebida')) {
+        categoria = 'food';
+    }
+    else if (topicLower.includes('sport') || topicLower.includes('deporte')) {
+        categoria = 'sports';
+    }
+    else if (topicLower.includes('color') || topicLower.includes('colour')) {
+        categoria = 'colors';
+    }
+    else if (topicLower.includes('family') || topicLower.includes('familia')) {
+        categoria = 'family';
+    }
+    else if (topicLower.includes('animal')) {
+        categoria = 'animals';
+    }
+    else if (topicLower.includes('body') || topicLower.includes('cuerpo')) {
+        categoria = 'body';
+    }
+    else if (topicLower.includes('school') || topicLower.includes('colegio') || topicLower.includes('escuela')) {
+        categoria = 'school';
+    }
+    else if (topicLower.includes('hobbi') || topicLower.includes('afici')) {
+        categoria = 'hobbies';
+    }
+    // Vocabulario general (todas las categorías mezcladas)
+    else {
+        categoria = null;
+    }

@@ -1,51 +1,85 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
-import { Camera, Save, Loader2, User, Calendar, BookOpen, Brain, MoreHorizontal, LogOut, Upload, Star, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+    Camera, Save, Loader2, User, BookOpen, Brain,
+    MoreHorizontal, LogOut, Star, Sparkles, Plus, Trash2,
+    Search, TrendingUp, Heart, ThumbsUp, ThumbsDown, MessageSquare,
+    Settings, Layout, UserCircle, X, Key
+} from 'lucide-react';
+import EarlyDetectionPrimary from './EarlyDetectionPrimary';
+import EarlyDetectionSecondary from './EarlyDetectionSecondary';
+import EarlyDetectionGames from './EarlyDetectionGames';
+import StudentInsightsDashboard from './StudentInsightsDashboard';
+import RadarChart from './RadarChart';
+import OnboardingWizard from './OnboardingWizard';
 
 const StudentProfile = () => {
+    const [students, setStudents] = useState([]);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [uploading, setUploading] = useState(false);
     const [saving, setSaving] = useState(false);
-    const [userData, setUserData] = useState({
-        id: '',
-        full_name: '',
-        birthdate: '',
-        education_level: '', // 'primaria', 'eso', 'bachillerato'
-        grade_level: '',
-        autonomous_community: '', // New: Comunidad Autónoma
-        interests: '', // Changed to string for textarea
-        favorite_subjects: '', // Changed to string for textarea
-        least_favorite_subjects: '', // New field default
-        learning_style: '', // New field default
-        observations: '',
-        avatar_url: null
+    const [screeningView, setScreeningView] = useState(null);
+    const fileInputRef = useRef(null);
+    const [apiKeys, setApiKeys] = useState({
+        GEMINI_API_KEY: localStorage.getItem('GEMINI_API_KEY') || '',
+        SAMBANOVA_API_KEY: localStorage.getItem('SAMBANOVA_API_KEY') || '',
+        OPENROUTER_API_KEY: localStorage.getItem('OPENROUTER_API_KEY') || ''
     });
+
+    const [learningProfile, setLearningProfile] = useState({
+        vark_scores: { v: 0.25, a: 0.25, r: 0.25, k: 0.25 },
+        multiple_intelligences: {
+            linguistic: 0.5, logical: 0.5, spatial: 0.5, kinesthetic: 0.5,
+            musical: 0.5, interpersonal: 0.5, intrapersonal: 0.5, naturalistic: 0.5
+        },
+        cognitive_traits: {
+            attention: 'normal',
+            processing_speed: 'normal',
+            persistence: 'normal'
+        },
+        confidence_score: 0.5
+    });
+
+    // Alias to maintain compatibility with existing code using userData
+    const userData = selectedStudent;
+    const setUserData = setSelectedStudent;
+
     const navigate = useNavigate();
 
-    // Configuration Lists
+    const isSoft = selectedStudent?.education_level === 'primaria' || !selectedStudent;
+    const isRobust = selectedStudent?.education_level === 'eso' || selectedStudent?.education_level === 'bachillerato';
+
+    const theme = {
+        card: isSoft
+            ? 'rounded-[50px] shadow-2xl shadow-indigo-100/50 border-none bg-white overflow-hidden'
+            : 'rounded-[40px] border border-slate-200 shadow-xl overflow-hidden bg-white',
+        accent: 'bg-gradient-to-br from-indigo-700 via-blue-800 to-slate-900',
+        bg: isSoft ? 'bg-indigo-50/20' : 'bg-slate-50',
+        input: isSoft
+            ? 'rounded-3xl bg-white border border-indigo-100/50 shadow-sm focus:ring-4 focus:ring-indigo-100 transition-all font-bold text-sm'
+            : 'rounded-2xl bg-white border-2 border-slate-100 focus:border-indigo-500 focus:ring-0 transition-all font-bold text-sm'
+    };
+
     const educationLevels = [
         { id: 'primaria', label: 'Primaria' },
         { id: 'eso', label: 'ESO' },
-        { id: 'bachillerato', label: 'Bachillerato' },
-        { id: 'fp', label: 'Formación Profesional' }
+        { id: 'bachillerato', label: 'Bachillerato' }
     ];
 
     const gradesByLevel = {
         'primaria': ['1º Primaria', '2º Primaria', '3º Primaria', '4º Primaria', '5º Primaria', '6º Primaria'],
         'eso': ['1º ESO', '2º ESO', '3º ESO', '4º ESO'],
-        'bachillerato': ['1º Bachillerato', '2º Bachillerato'],
-        'fp': ['Grado Medio', 'Grado Superior']
+        'bachillerato': ['1º Bachillerato', '2º Bachillerato']
     };
 
-    const autonomousCommunities = [
-        'Andalucía', 'Aragón', 'Asturias', 'Baleares', 'Canarias',
-        'Cantabria', 'Castilla-La Mancha', 'Castilla y León', 'Cataluña',
-        'Comunidad Valenciana', 'Extremadura', 'Galicia', 'La Rioja',
-        'Madrid', 'Murcia', 'Navarra', 'País Vasco', 'Ceuta', 'Melilla'
+    const learningStyles = [
+        { id: 'visual', label: 'Canal Visual', desc: 'Retención mediante imágenes y esquemas', icon: '👁️' },
+        { id: 'auditivo', label: 'Canal Auditivo', desc: 'Procesamiento por escucha activa', icon: '👂' },
+        { id: 'kinestesico', label: 'Lógica Vivencial', desc: 'Aprendizaje por acción y experiencia', icon: '✋' },
+        { id: 'lectura', label: 'Análisis Lector', desc: 'Comprensión profunda por texto', icon: '📖' }
     ];
-
-    const commonSubjects = ['Matemáticas', 'Lengua Castellana', 'Inglés', 'Física', 'Química', 'Biología', 'Historia', 'Geografía', 'Filosofía', 'Economía', 'Latín', 'Griego', 'Música', 'Tecnología'];
 
     useEffect(() => {
         fetchProfile();
@@ -54,399 +88,440 @@ const StudentProfile = () => {
     const fetchProfile = async () => {
         try {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                navigate('/');
-                return;
-            }
+            if (!user) { navigate('/'); return; }
 
-            // Always set the ID so we can Save (Upsert) even if profile doesn't exist yet
-            setUserData(prev => ({ ...prev, id: user.id }));
+            const { data: studentsData, error } = await supabase.from('students').select('*').eq('parent_id', user.id);
+            if (error) throw error;
 
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-
-            if (error && error.code !== 'PGRST116') throw error; // Ignore "no rows" error
-
-            if (data) {
-                setUserData(prev => ({
-                    ...prev,
-                    full_name: data.full_name || '',
-                    birthdate: data.birthdate || '',
-                    education_level: data.grade_level ? guessLevel(data.grade_level) : '',
-                    grade_level: data.grade_level || '',
-                    autonomous_community: data.autonomous_community || '',
-                    // Ensure these are strings for the TextAreas
-                    interests: Array.isArray(data.interests) ? data.interests.join(', ') : (data.interests || ''),
-                    favorite_subjects: Array.isArray(data.favorite_subjects) ? data.favorite_subjects.join(', ') : (data.favorite_subjects || ''),
-                    least_favorite_subjects: Array.isArray(data.least_favorite_subjects) ? data.least_favorite_subjects.join(', ') : (data.least_favorite_subjects || ''),
-                    observations: data.observations || '',
-                    learning_style: data.learning_style || '',
-                    avatar_url: data.avatar_url || null
-                }));
+            if (studentsData && studentsData.length > 0) {
+                setStudents(studentsData);
+                const firstStudent = studentsData[0];
+                if (!selectedStudent) {
+                    setSelectedStudent(firstStudent);
+                    fetchLearningProfile(firstStudent.id);
+                }
+            } else {
+                setStudents([]);
+                setSelectedStudent(null);
+                // No configuramos modo manual, dejamos que el Wizard salte en el render
+                // setIsEditing(true); 
             }
         } catch (error) {
-            console.error('Error loading profile:', error);
+            console.error('Error in fetchProfile:', error);
         } finally {
             setLoading(false);
         }
     };
 
-    const guessLevel = (grade) => {
-        if (!grade) return 'eso';
-        if (grade.includes('Primaria')) return 'primaria';
-        if (grade.includes('ESO')) return 'eso';
-        if (grade.includes('Bachillerato')) return 'bachillerato';
-        return 'eso'; // Default
-    };
-
-    const handleImageUpload = async (event) => {
+    const fetchLearningProfile = async (studentId) => {
         try {
-            setUploading(true);
+            const { data, error } = await supabase
+                .from('learning_profiles')
+                .select('*')
+                .eq('student_id', studentId)
+                .maybeSingle();
 
-            if (!event.target.files || event.target.files.length === 0) {
-                throw new Error('You must select an image to upload.');
+            if (data) {
+                setLearningProfile({
+                    ...learningProfile,
+                    ...data
+                });
             }
-
-            const file = event.target.files[0];
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${userData.id}/${Math.random()}.${fileExt}`;
-            const filePath = `${fileName}`;
-
-            // Upload to Supabase Storage
-            const { error: uploadError } = await supabase.storage
-                .from('avatars')
-                .upload(filePath, file);
-
-            if (uploadError) throw uploadError;
-
-            // Get Public URL
-            const { data: { publicUrl } } = supabase.storage
-                .from('avatars')
-                .getPublicUrl(filePath);
-
-            setUserData(prev => ({ ...prev, avatar_url: publicUrl }));
-
-        } catch (error) {
-            alert('Error uploading image: ' + error.message);
-        } finally {
-            setUploading(false);
+        } catch (err) {
+            console.error("Error fetching learning profile:", err);
         }
     };
 
-    const handleSave = async (e) => {
-        e.preventDefault();
-        setSaving(true);
-        try {
-            // Using UPSERT to handle both Create and Update
-            const { error } = await supabase
-                .from('profiles')
-                .upsert({
-                    id: userData.id, // Mandatory for Upsert
-                    full_name: userData.full_name,
-                    birthdate: userData.birthdate ? userData.birthdate : null, // Handle empty date string
-                    grade_level: userData.grade_level,
-                    autonomous_community: userData.autonomous_community,
-                    interests: userData.interests,
-                    favorite_subjects: userData.favorite_subjects,
-                    least_favorite_subjects: userData.least_favorite_subjects,
-                    observations: userData.observations,
-                    learning_style: userData.learning_style,
-                    avatar_url: userData.avatar_url,
-                    updated_at: new Date()
-                });
+    const handleAvatarClick = () => {
+        if (fileInputRef.current) fileInputRef.current.click();
+    };
 
-            if (error) throw error;
-            // Maybe show a nice toast here
-            alert('Perfil guardado correctamente');
+    const handleFileUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            setSaving(true);
+            const reader = new FileReader();
+            reader.onload = (uploadEvent) => {
+                setSelectedStudent({ ...selectedStudent, avatar_url: uploadEvent.target.result });
+                setSaving(false);
+            };
+            reader.readAsDataURL(file);
+
+            // Si quieres guardar permanentemente en Supabase, necesitaríamos un bucket
+            // Por ahora lo guardamos como Base64 para que funcione inmediato
+        } catch (err) {
+            console.error(err);
+            setSaving(false);
+        }
+    };
+
+    const guessLevel = (grade) => {
+        if (!grade) return 'primaria';
+        if (grade.includes('Primaria')) return 'primaria';
+        if (grade.includes('ESO')) return 'eso';
+        if (grade.includes('Bachillerato')) return 'bachillerato';
+        return 'primaria';
+    };
+
+    const handleDelete = async (studentId, studentName) => {
+        if (!window.confirm(`¿Seguro que quieres borrar el perfil de ${studentName}? Esta acción no se puede deshacer.`)) return;
+
+        try {
+            setSaving(true);
+            console.log('🗑️ Intentando borrar estudiante:', studentId);
+            const { error } = await supabase.from('students').delete().eq('id', studentId);
+
+            if (error) {
+                console.error('❌ Error de Supabase al borrar:', error);
+                throw error;
+            }
+
+            console.log('✅ Estudiante borrado con éxito');
+            alert('Perfil borrado correctamente.');
+            fetchProfile();
         } catch (error) {
-            alert('Error saving profile: ' + error.message);
+            console.error('❌ Fallo en handleDelete:', error);
+            alert('Error al borrar: ' + error.message);
         } finally {
             setSaving(false);
         }
     };
 
-    const calculateAge = (birthdate) => {
-        if (!birthdate) return '-';
-        const today = new Date();
-        const birthDate = new Date(birthdate);
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age;
-    };
+    const handleSave = async (e) => {
+        if (e) e.preventDefault();
+        setSaving(true);
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error("No hay sesión de usuario");
 
-    const toggleList = (listName, item) => {
-        setUserData(prev => {
-            const list = prev[listName] || [];
-            if (list.includes(item)) {
-                return { ...prev, [listName]: list.filter(i => i !== item) };
-            } else {
-                return { ...prev, [listName]: [...list, item] };
+            // 1. Guardar Estudiante
+            const { data: savedStudent, error: studentError } = await supabase
+                .from('students')
+                .upsert({
+                    ...selectedStudent,
+                    parent_id: user.id
+                })
+                .select()
+                .single();
+
+            if (studentError) throw studentError;
+
+            // 2. Guardar Perfil de Aprendizaje Profundo
+            const { error: profileError } = await supabase
+                .from('learning_profiles')
+                .upsert({
+                    student_id: savedStudent.id,
+                    vark_scores: learningProfile.vark_scores,
+                    vark_dominant: selectedStudent.learning_style,
+                    multiple_intelligences: learningProfile.multiple_intelligences,
+                    cognitive_traits: learningProfile.cognitive_traits,
+                    confidence_score: learningProfile.confidence_score,
+                    last_updated: new Date().toISOString()
+                }, { onConflict: 'student_id' });
+
+            if (profileError) {
+                console.warn("Error saving learning profile (did you run expand_learning_profile.sql?):", profileError);
             }
-        });
+
+            // 3. Guardar Keys
+            localStorage.setItem('GEMINI_API_KEY', apiKeys.GEMINI_API_KEY);
+            localStorage.setItem('SAMBANOVA_API_KEY', apiKeys.SAMBANOVA_API_KEY);
+            localStorage.setItem('OPENROUTER_API_KEY', apiKeys.OPENROUTER_API_KEY);
+
+            alert('¡Configuración completa de ' + (savedStudent.full_name || 'tu hijo') + ' guardada! 🧠');
+            setIsEditing(false);
+            fetchProfile();
+        } catch (error) {
+            alert(error.message);
+        } finally { setSaving(false); }
     };
 
     if (loading) return (
-        <div className="min-h-screen flex justify-center items-center bg-gray-50">
-            <Loader2 className="animate-spin text-blue-600 w-8 h-8" />
+        <div className="min-h-screen flex items-center justify-center bg-white">
+            <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
-            <div className="max-w-3xl mx-auto">
+        <div className={`min-h-screen ${theme.bg} pb-20 font-sans`}>
+            {/* Header Hero (ResourceHub Style) */}
+            <div className="bg-gradient-to-br from-indigo-700 via-blue-800 to-slate-900 text-white py-20 px-6 overflow-hidden relative">
+                {/* Decorative Blobs */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[100px] -mr-40 -mt-40 animate-pulse"></div>
+                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-500/10 rounded-full blur-[80px] -ml-20 -mb-20"></div>
 
-                {/* Header / Title */}
-                <div className="mb-8 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-bold font-heading text-gray-900">Perfil del Estudiante</h1>
-                        <p className="text-gray-500 mt-1">Personaliza la información para adaptar la IA a tus necesidades.</p>
+                <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
+                    <div className="mb-8 md:mb-0">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 mb-6">
+                            <Sparkles className="w-4 h-4 text-yellow-300" />
+                            <span className="text-xs font-bold uppercase tracking-widest text-blue-100">Panel de Control</span>
+                        </div>
+                        <h1 className="text-5xl font-extrabold tracking-tight mb-4">NeuroPerfil</h1>
+                        <p className="text-xl text-blue-100/80 max-w-xl font-medium leading-relaxed">
+                            Administra los perfiles de tus hijos y configura su experiencia de aprendizaje personalizada.
+                        </p>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col gap-3 min-w-[200px]">
+                        {isEditing ? (
+                            <button
+                                onClick={() => setIsEditing(false)}
+                                className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all"
+                            >
+                                Volver a la lista
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => {
+                                    setSelectedStudent({
+                                        full_name: '',
+                                        education_level: 'primaria',
+                                        grade_level: '',
+                                        editorial_math: 'Santillana',
+                                        editorial_language: 'Santillana',
+                                        editorial_science: 'Santillana',
+                                        editorial_english: 'Go Far',
+                                        challenge_level: 'standard',
+                                        interests: '',
+                                        learning_style: 'visual',
+                                        avatar_url: null
+                                    });
+                                    setIsEditing(true);
+                                }}
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all"
+                            >
+                                <Plus className="w-4 h-4" /> Añadir Hijo
+                            </button>
+                        )}
+
                     </div>
                 </div>
+            </div>
 
-                <form onSubmit={handleSave} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            {console.log('👥 RENDER ESTUDIANTES:', students)}
+            <div className="max-w-6xl mx-auto px-4 -mt-6">
+                {students.length === 0 && !loading ? (
+                    <OnboardingWizard onComplete={(meta) => {
+                        // Al terminar, recargamos el perfil para que encuentre al nuevo estudiante creado
+                        fetchProfile();
 
-                    {/* Top Section: Avatar & Basic Info */}
-                    <div className="p-8 border-b border-white/10 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
-                        {/* Animated background blobs */}
-                        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-                            <div className="absolute -top-20 -right-20 w-60 h-60 bg-white rounded-full mix-blend-overlay filter blur-3xl"></div>
-                            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-white rounded-full mix-blend-overlay filter blur-3xl"></div>
-                        </div>
+                        // Default params
+                        let params = new URLSearchParams();
+                        params.set('tab', 'library');
+                        params.set('new_user', 'true');
 
-                        <div className="flex flex-col md:flex-row gap-8 items-start relative z-10">
+                        if (meta) {
+                            if (meta.topic) params.set('topic', meta.topic);
+                            if (meta.block) params.set('block', meta.block);
+                        }
 
-                            {/* Avatar Uploader */}
-                            <div className="flex-shrink-0 relative group mx-auto md:mx-0">
-                                <div className="w-32 h-32 rounded-full border-4 border-white/30 shadow-2xl overflow-hidden bg-white/10 backdrop-blur-sm flex items-center justify-center text-4xl font-bold text-white">
-                                    {userData.avatar_url ? (
-                                        <img src={userData.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                        window.location.href = `/hub?${params.toString()}`;
+                    }} />
+                ) : !isEditing ? (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {students.map(child => (
+                            <div key={child.id} className="bg-white rounded-[40px] p-8 shadow-xl shadow-slate-200 border border-slate-100 flex flex-col items-center group relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                                    <User className="w-20 h-20" />
+                                </div>
+                                <div className="w-24 h-24 rounded-[35px] bg-indigo-50 flex items-center justify-center mb-6 overflow-hidden">
+                                    {child.avatar_url ? (
+                                        <img src={child.avatar_url} alt={child.full_name} className="w-full h-full object-cover" />
                                     ) : (
-                                        <span>{userData.full_name ? userData.full_name.charAt(0).toUpperCase() : <User size={48} className="text-white/80" />}</span>
+                                        <UserCircle className="w-12 h-12 text-indigo-400" />
                                     )}
                                 </div>
-                                <label className="absolute bottom-0 right-0 p-2.5 bg-white text-purple-600 rounded-full hover:bg-gray-100 cursor-pointer shadow-lg transition-transform hover:scale-110 active:scale-95">
-                                    {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Camera className="w-5 h-5" />}
-                                    <input
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={handleImageUpload}
-                                        disabled={uploading}
-                                    />
-                                </label>
-                            </div>
-
-                            {/* Name & Age */}
-                            <div className="flex-grow space-y-6 w-full">
-                                <div>
-                                    <label className="block text-sm font-bold text-blue-100 mb-2">Nombre Completo</label>
-                                    <input
-                                        type="text"
-                                        value={userData.full_name}
-                                        onChange={e => setUserData({ ...userData, full_name: e.target.value })}
-                                        className="w-full p-3 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all text-white placeholder-blue-200 backdrop-blur-sm"
-                                        placeholder="Ej. Juan Pérez"
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-bold text-blue-100 mb-2">Fecha de Nacimiento</label>
-                                        <div className="relative">
-                                            <input
-                                                type="date"
-                                                value={userData.birthdate}
-                                                onChange={e => setUserData({ ...userData, birthdate: e.target.value })}
-                                                className="w-full p-3 pl-10 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-white/50 transition-all text-white [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
-                                            />
-                                            <Calendar className="absolute left-3 top-3.5 w-5 h-5 text-blue-200 pointer-events-none" />
-                                        </div>
+                                <h3 className="text-xl font-black text-slate-800 mb-1">{child.full_name}</h3>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full mb-6">
+                                    {child.grade_level}
+                                </p>
+                                <div className="w-full grid grid-cols-2 gap-3 mb-8">
+                                    <div className="bg-slate-50 p-3 rounded-2xl text-center">
+                                        <p className="text-[8px] font-black text-slate-400 uppercase">Editorial</p>
+                                        <p className="text-xs font-bold text-slate-700">{child.editorial_math}</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-bold text-blue-100 mb-2">Edad</label>
-                                        <div className="p-3 bg-white/10 border border-white/20 rounded-xl text-white font-medium backdrop-blur-sm">
-                                            {calculateAge(userData.birthdate)} años
-                                        </div>
+                                    <div className="bg-slate-50 p-3 rounded-2xl text-center">
+                                        <p className="text-[8px] font-black text-slate-400 uppercase">Nivel</p>
+                                        <p className="text-xs font-bold text-slate-700 capitalize">{child.challenge_level}</p>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Academic Details */}
-                    <div className="p-8 space-y-8">
-
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Nivel Educativo</label>
-                                <select
-                                    value={userData.education_level}
-                                    onChange={e => {
-                                        setUserData({
-                                            ...userData,
-                                            education_level: e.target.value,
-                                            grade_level: '' // Reset grade when level changes
-                                        });
-                                    }}
-                                    className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all"
-                                >
-                                    <option value="">Seleccionar nivel...</option>
-                                    {educationLevels.map(lvl => (
-                                        <option key={lvl.id} value={lvl.id}>{lvl.label}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Curso / Grado</label>
-                                <select
-                                    value={userData.grade_level}
-                                    onChange={e => setUserData({ ...userData, grade_level: e.target.value })}
-                                    disabled={!userData.education_level}
-                                    className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all disabled:bg-gray-50 disabled:text-gray-400"
-                                >
-                                    <option value="">{userData.education_level ? 'Seleccionar curso...' : 'Selecciona un nivel primero'}</option>
-                                    {userData.education_level && gradesByLevel[userData.education_level].map(g => (
-                                        <option key={g} value={g}>{g}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Autonomous Community */}
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                                🇪🇸 Comunidad Autónoma
-                                <span className="text-xs font-normal text-gray-500">(para adaptar currículo)</span>
-                            </label>
-                            <select
-                                value={userData.autonomous_community}
-                                onChange={e => setUserData({ ...userData, autonomous_community: e.target.value })}
-                                className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all"
-                            >
-                                <option value="">Seleccionar comunidad...</option>
-                                {autonomousCommunities.map(cc => (
-                                    <option key={cc} value={cc}>{cc}</option>
-                                ))}
-                            </select>
-                            <p className="text-xs text-gray-500 mt-1">
-                                💡 Importante para generar contenido adaptado al currículo autonómico
-                            </p>
-                        </div>
-
-                        {/* Subjects */}
-                        {/* Learning Style */}
-                        <div>
-                            <div className="flex items-center gap-2 mb-4">
-                                <Brain className="text-purple-600 w-5 h-5" />
-                                <h3 className="font-bold text-gray-900">Estilo de Aprendizaje</h3>
-                            </div>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                {[
-                                    { id: 'visual', label: 'Visual', icon: '👁️', desc: 'Aprende viendo imágenes y gráficos.' },
-                                    { id: 'auditivo', label: 'Auditivo', icon: '👂', desc: 'Aprende escuchando explicaciones.' },
-                                    { id: 'kinestesico', label: 'Kinestésico', icon: '✋', desc: 'Aprende tocando y haciendo.' },
-                                    { id: 'lectura', label: 'Lectura/Escritura', icon: '📖', desc: 'Aprende leyendo y tomando notas.' }
-                                ].map((style) => (
-                                    <div
-                                        key={style.id}
-                                        onClick={() => setUserData({ ...userData, learning_style: style.id })}
-                                        className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${userData.learning_style === style.id
-                                            ? 'border-purple-600 bg-purple-50'
-                                            : 'border-gray-100 bg-white hover:border-purple-200'}`}
+                                <div className="flex flex-col w-full gap-3">
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => {
+                                                setSelectedStudent(child);
+                                                setIsEditing(true);
+                                            }}
+                                            className="flex-1 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center gap-2"
+                                        >
+                                            <TrendingUp className="w-4 h-4" /> Dashboard
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDelete(child.id, child.full_name);
+                                            }}
+                                            className="p-4 bg-red-50 text-red-500 rounded-2xl hover:bg-red-100 transition-all"
+                                            title="Borrar Perfil"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                    <button
+                                        onClick={() => navigate('/tutor')}
+                                        className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:shadow-lg shadow-purple-500/30 transition-all flex items-center justify-center gap-2"
                                     >
-                                        <div className="text-2xl mb-2">{style.icon}</div>
-                                        <div className="font-bold text-gray-900">{style.label}</div>
-                                        <div className="text-xs text-gray-500 leading-tight mt-1">{style.desc}</div>
+                                        <MessageSquare className="w-4 h-4" /> 🤖 Tutor IA
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <form onSubmit={handleSave} className="space-y-10">
+                        {/* 1. SECCIÓN PRINCIPAL: IDENTIDAD */}
+                        <div className={`bg-white ${theme.card} relative overflow-hidden`}>
+                            <div className="p-8 md:p-12">
+                                <div className="flex flex-col lg:grid lg:grid-cols-12 gap-12">
+                                    <div className="lg:col-span-12 flex flex-col md:flex-row items-start gap-10">
+                                        <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
+                                            <div className="w-36 h-36 rounded-[50px] overflow-hidden shadow-2xl border-4 border-white bg-gray-50 flex items-center justify-center">
+                                                {selectedStudent?.avatar_url ? (
+                                                    <img src={selectedStudent.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <UserCircle className="w-20 h-20 text-indigo-200" />
+                                                )}
+                                            </div>
+                                            <div className="absolute inset-0 bg-black/20 rounded-[50px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <Camera className="text-white w-8 h-8" />
+                                            </div>
+                                            <p className="text-center text-[8px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Cambiar Foto</p>
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                className="hidden"
+                                                accept="image/*"
+                                                onChange={handleFileUpload}
+                                            />
+                                        </div>
+
+                                        <div className="flex-1 space-y-6 w-full">
+                                            <div className="space-y-4">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Nombre de tu hijo/a"
+                                                    value={selectedStudent?.full_name || ''}
+                                                    onChange={e => setSelectedStudent({ ...selectedStudent, full_name: e.target.value })}
+                                                    className="w-full bg-transparent border-none text-4xl font-black text-gray-900 focus:ring-0 placeholder-gray-200 p-0"
+                                                />
+                                                <div className="flex flex-wrap items-center gap-3">
+                                                    <select
+                                                        value={selectedStudent.education_level}
+                                                        onChange={e => setSelectedStudent({ ...selectedStudent, education_level: e.target.value })}
+                                                        className="px-4 py-2 bg-blue-100 text-blue-700 rounded-2xl text-xs font-black uppercase tracking-widest border-none cursor-pointer"
+                                                    >
+                                                        {educationLevels.map(lvl => <option key={lvl.id} value={lvl.id}>{lvl.label}</option>)}
+                                                    </select>
+                                                    <select
+                                                        value={selectedStudent.grade_level}
+                                                        onChange={e => setSelectedStudent({ ...selectedStudent, grade_level: e.target.value })}
+                                                        className="px-4 py-2 bg-purple-100 text-purple-700 rounded-2xl text-xs font-black uppercase tracking-widest border-none cursor-pointer"
+                                                    >
+                                                        <option value="">Seleccionar curso</option>
+                                                        {gradesByLevel[selectedStudent.education_level]?.map(g => <option key={g} value={g}>{g}</option>)}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            {/* Nuevo: Lo que más le gusta y lo que más le cuesta */}
+                                            <div className="grid md:grid-cols-2 gap-4 pt-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-xs font-black uppercase tracking-widest text-emerald-600 flex items-center gap-2">
+                                                        <ThumbsUp className="w-4 h-4" /> Lo que más le gusta
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={selectedStudent?.favorite_subjects || ''}
+                                                        onChange={e => setSelectedStudent({ ...selectedStudent, favorite_subjects: e.target.value })}
+                                                        className="w-full px-4 py-3 rounded-2xl bg-emerald-50 border-2 border-emerald-100 text-sm font-bold text-emerald-900 placeholder:text-emerald-300 focus:border-emerald-500 focus:ring-0 transition-all"
+                                                        placeholder="Ej: Educación Física, Arte..."
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-xs font-black uppercase tracking-widest text-amber-600 flex items-center gap-2">
+                                                        <ThumbsDown className="w-4 h-4" /> Lo que más le cuesta
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={selectedStudent?.least_favorite_subjects || ''}
+                                                        onChange={e => setSelectedStudent({ ...selectedStudent, least_favorite_subjects: e.target.value })}
+                                                        className="w-full px-4 py-3 rounded-2xl bg-amber-50 border-2 border-amber-100 text-sm font-bold text-amber-900 placeholder:text-amber-300 focus:border-amber-500 focus:ring-0 transition-all"
+                                                        placeholder="Ej: Matemáticas, Lengua..."
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                ))}
+                                </div>
                             </div>
                         </div>
 
-                        {/* Subjects (Text Areas) */}
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <div className="flex items-center gap-2 mb-2">
-                                    <BookOpen className="text-blue-600 w-4 h-4" />
-                                    <label className="font-bold text-gray-900">Asignaturas Favoritas</label>
-                                </div>
-                                <textarea
-                                    value={userData.favorite_subjects}
-                                    onChange={e => setUserData({ ...userData, favorite_subjects: e.target.value })}
-                                    className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all text-sm min-h-[100px]"
-                                    placeholder="Ej: Matemáticas, Educación Física..."
-                                />
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-2 mb-2">
-                                    <BookOpen className="text-red-500 w-4 h-4" />
-                                    <label className="font-bold text-gray-900">Asignaturas Menos Favoritas</label>
-                                </div>
-                                <textarea
-                                    value={userData.least_favorite_subjects || ''} // Handle potential null
-                                    onChange={e => setUserData({ ...userData, least_favorite_subjects: e.target.value })}
-                                    className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 transition-all text-sm min-h-[100px]"
-                                    placeholder="Ej: Historia, Inglés..."
-                                />
-                            </div>
+
+                        {/* 2. DASHBOARD INTEGRADO */}
+                        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                            <StudentInsightsDashboard studentId={selectedStudent?.id} onNavigate={setScreeningView} />
                         </div>
 
-                        {/* Interests & Observations */}
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Star className="text-yellow-500 w-4 h-4" />
-                                    <label className="font-bold text-gray-900">Intereses y Hobbies</label>
-                                </div>
-                                <textarea
-                                    value={userData.interests} // Now expecting a string
-                                    onChange={e => setUserData({ ...userData, interests: e.target.value })}
-                                    className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm min-h-[100px]"
-                                    placeholder="Ej: Fútbol, Videojuegos, Pintura, Dinosaurios..."
-                                />
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Users className="text-green-600 w-4 h-4" />
-                                    <label className="font-bold text-gray-900">Observaciones Generales</label>
-                                </div>
-                                <textarea
-                                    value={userData.observations || ''}
-                                    onChange={e => setUserData({ ...userData, observations: e.target.value })}
-                                    className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 transition-all text-sm min-h-[100px]"
-                                    placeholder="Ej: Se distrae fácilmente, necesita ejemplos visuales..."
-                                />
-                            </div>
+                        {/* Botones de acción finales */}
+                        <div className="flex justify-end gap-4 pt-10">
+                            <button type="button" onClick={() => setIsEditing(false)} className="px-10 py-5 rounded-2xl bg-slate-100 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all">
+                                Volver a la lista
+                            </button>
+                            <button type="submit" disabled={saving} className="px-10 py-5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xs uppercase tracking-[0.2em] hover:scale-105 transition-all flex items-center gap-3 shadow-lg shadow-blue-500/30">
+                                {saving ? <Loader2 className="animate-spin w-4 h-4" /> : <Save className="w-5 h-5" />}
+                                Guardar Cambios
+                            </button>
                         </div>
-
-                    </div>
-
-                    {/* Footer Actions */}
-                    <div className="p-6 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-4">
-                        <button
-                            type="button"
-                            onClick={() => setUserData({ ...userData /* reset logic could go here */ })}
-                            className="px-6 py-2.5 text-gray-600 font-semibold hover:bg-gray-200 rounded-xl transition-all"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={saving}
-                            className="flex items-center gap-2 px-8 py-2.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed"
-                        >
-                            {saving ? <Loader2 className="animate-spin w-5 h-5" /> : <Save className="w-5 h-5" />}
-                            Guardar Cambios
-                        </button>
-                    </div>
-
-                </form>
+                    </form>
+                )
+                }
             </div >
+
+
+            {/* MODALS PERSISTENTES */}
+            {
+                screeningView && (
+                    <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-900/80 backdrop-blur-xl flex items-start justify-center p-4 py-10">
+                        <div className="w-full max-w-[95vw] relative">
+                            <div className="relative">
+                                <button
+                                    onClick={() => setScreeningView(null)}
+                                    className="absolute -top-12 right-0 md:-right-12 text-white p-3 hover:bg-white/20 rounded-full transition-all bg-white/10 backdrop-blur-md shadow-lg"
+                                    title="Volver al perfil"
+                                >
+                                    <X className="w-6 h-6" />
+                                </button>
+                                <div className="bg-transparent">
+                                    {screeningView === 'QUESTIONNAIRE' ? (
+                                        userData.education_level === 'primaria' ? (
+                                            <EarlyDetectionPrimary studentId={userData.id} onComplete={(a) => a === 'GAMES' ? setScreeningView('GAMES') : setScreeningView(null)} />
+                                        ) : (
+                                            <EarlyDetectionSecondary studentId={userData.id} onComplete={() => setScreeningView(null)} />
+                                        )
+                                    ) : screeningView === 'GAMES' ? (
+                                        <EarlyDetectionGames studentId={userData.id} onBack={() => setScreeningView('QUESTIONNAIRE')} />
+                                    ) : (
+                                        <StudentInsightsDashboard studentId={userData.id} onNavigate={setScreeningView} />
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
         </div >
     );
 };

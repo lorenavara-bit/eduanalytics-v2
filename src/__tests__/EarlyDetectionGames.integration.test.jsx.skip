@@ -1,0 +1,93 @@
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import EarlyDetectionGames from '../components/EarlyDetectionGames';
+
+// Mock supabase client used inside the component
+jest.mock('../supabaseClient', () => ({
+    supabase: {
+        from: () => ({
+            insert: jest.fn().mockResolvedValue({ error: null })
+        })
+    }
+}));
+
+// Mock the three game components to be simple placeholders that call onComplete
+jest.mock('../components/games/PseudopalabrasGame', () => (props) => (
+    <div data-testid="pseudopalabras-game">
+        <button onClick={() => props.onComplete({ accuracy: 60 })}>Finish Dyslexia Game</button>
+    </div>
+));
+
+jest.mock('../components/games/AtencionGame', () => (props) => (
+    <div data-testid="atencion-game">
+        <button onClick={() => props.onComplete({ commissions: 5, hits: 3 })}>Finish ADHD Game</button>
+    </div>
+));
+
+jest.mock('../components/games/LogicaGame', () => (props) => (
+    <div data-testid="logica-game">
+        <button onClick={() => props.onComplete({ results: [{ isCorrect: true }, { isCorrect: false }, { isCorrect: true }, { isCorrect: true }] })}>Finish AACC Game</button>
+    </div>
+));
+
+describe('EarlyDetectionGames integration test', () => {
+    const studentId = 'test-student-001';
+    const onBack = jest.fn();
+
+    beforeAll(() => {
+        // Mock window.alert to avoid actual alerts during tests
+        jest.spyOn(window, 'alert').mockImplementation(() => { });
+    });
+
+    afterAll(() => {
+        jest.restoreAllMocks();
+    });
+
+    test('renders game cards and launches Dyslexia game', async () => {
+        render(<EarlyDetectionGames studentId={studentId} onBack={onBack} />);
+
+        // Verify the three cards are present
+        expect(screen.getByText(/Laberinto de Palabras/i)).toBeInTheDocument();
+        expect(screen.getByText(/Ojo de Águila/i)).toBeInTheDocument();
+        expect(screen.getByText(/Detective de Patrones/i)).toBeInTheDocument();
+
+        // Click the Dyslexia "Jugar Ahora" button
+        const dyslexiaButton = screen.getAllByRole('button', { name: /Jugar Ahora/i })[0];
+        fireEvent.click(dyslexiaButton);
+
+        // The mocked PseudopalabrasGame should appear
+        const game = await screen.findByTestId('pseudopalabras-game');
+        expect(game).toBeInTheDocument();
+
+        // Finish the game (calls onComplete)
+        const finishBtn = screen.getByText(/Finish Dyslexia Game/i);
+        fireEvent.click(finishBtn);
+
+        // After completion, alert should have been called and we return to the card view
+        await waitFor(() => expect(window.alert).toHaveBeenCalledWith('¡Resultado guardado correctamente! Misión cumplida.'));
+        expect(screen.getByText(/Laberinto de Palabras/i)).toBeInTheDocument();
+    });
+
+    test('launches ADHD game and returns to menu after completion', async () => {
+        render(<EarlyDetectionGames studentId={studentId} onBack={onBack} />);
+        const adhdButton = screen.getAllByRole('button', { name: /Jugar Ahora/i })[1]; // second card
+        fireEvent.click(adhdButton);
+        const game = await screen.findByTestId('atencion-game');
+        expect(game).toBeInTheDocument();
+        fireEvent.click(screen.getByText(/Finish ADHD Game/i));
+        await waitFor(() => expect(window.alert).toHaveBeenCalled());
+        expect(screen.getByText(/Ojo de Águila/i)).toBeInTheDocument();
+    });
+
+    test('launches AACC game and returns to menu after completion', async () => {
+        render(<EarlyDetectionGames studentId={studentId} onBack={onBack} />);
+        const aaccButton = screen.getAllByRole('button', { name: /Jugar Ahora/i })[2]; // third card
+        fireEvent.click(aaccButton);
+        const game = await screen.findByTestId('logica-game');
+        expect(game).toBeInTheDocument();
+        fireEvent.click(screen.getByText(/Finish AACC Game/i));
+        await waitFor(() => expect(window.alert).toHaveBeenCalled());
+        expect(screen.getByText(/Detective de Patrones/i)).toBeInTheDocument();
+    });
+});

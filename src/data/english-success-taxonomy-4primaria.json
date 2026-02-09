@@ -1,0 +1,346 @@
+{
+    "mensajes_acierto": [
+        {
+            "id_success": "SUCCESS_G4_U1_3RD_PERSON_S",
+            "tema": "Present Simple",
+            "niveles_exito": {
+                "bronze": "¡Misión cumplida! 💪 Has activado la 'S' mágica de Beep. ¡Sigue así!",
+                "silver": "¡Perfecto! Has recordado que, al hablar de **He/She/It**, el verbo se conjuga añadiéndole la 'S'. ¡Es un superpoder de la 3ª persona!",
+                "gold": "¡Nivel Galáctico! 🚀 No solo has acertado el verbo, sino que has demostrado que dominas las rutinas diarias. ¡Eres un 'Pro' del inglés!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U1_ADV_FREQ_POS",
+            "tema": "Adverbs of Frequency",
+            "niveles_exito": {
+                "bronze": "¡Excelente! El adverbio está justo en su sitio. ¡Posición correcta! 🎯",
+                "silver": "¡Muy bien! Has puesto el adverbio de frecuencia (**always, usually...**) **antes** del verbo principal.",
+                "gold": "¡Victoria! Al colocar el adverbio antes del verbo, demuestras un control avanzado. ¡Estructura de frase 5 estrellas! ⭐"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U1_DO_DOES",
+            "tema": "Present Simple (Questions)",
+            "niveles_exito": {
+                "bronze": "¡WOW! Has elegido el auxiliar perfecto para la pregunta. 🤩",
+                "silver": "¡Acertaste! Utilizaste el auxiliar **'DOES'** para preguntar sobre **He, She, o It**.",
+                "gold": "¡Felicidades! Recordaste que la 'S' del verbo principal se mueve a 'DO' para formar 'DOES' en la pregunta. ¡Eso es gramática de campeonato!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U1_NEG_INFINITIVE",
+            "tema": "Present Simple (Negation)",
+            "niveles_exito": {
+                "bronze": "¡Sí! El verbo se queda en modo infinitivo. ¡Genial! ✨",
+                "silver": "¡Fantástico! Has puesto el verbo principal sin 'S' porque ya usaste **'doesn't'**. ¡Solo se necesita una 'S' por frase!",
+                "gold": "¡Lógica Impecable! Al usar 'doesn't', el verbo vuelve a su forma base. ¡Esto es la economía de la 'S' en acción!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U1_PREP_TIME",
+            "tema": "Time Prepositions",
+            "niveles_exito": {
+                "bronze": "¡La preposición de tiempo correcta! ⏱️",
+                "silver": "¡Bravo! Para decir la hora exacta, usaste la preposición **'AT'**. ¡Clavaste el momento!",
+                "gold": "¡Asombroso! 'AT' es la preposición para un punto exacto en el tiempo. ¡Conoces la regla gramatical a la perfección!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U2_DO_MAKE_HW",
+            "tema": "Collocations",
+            "niveles_exito": {
+                "bronze": "¡'Homework' y su verbo amigo! ¡Muy bien! 📚",
+                "silver": "¡Lo tienes! Usaste el verbo **'DO'** para 'homework'. ¡Recuerdas que 'DO' se usa para tareas!",
+                "gold": "¡Maestro de Collocations! Distinguiste que 'hacer la tarea' es una *actividad* habitual (DO) y no una creación (MAKE)."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U2_GO_TO_ACTION",
+            "tema": "Daily Routines",
+            "niveles_exito": {
+                "bronze": "¡Acción directa! Sin rodeos innecesarios. ✅",
+                "silver": "¡Correcto! Entiendes que para rutinas como ducharse, se usa **'HAVE'** (have a shower), sin el 'go to' inicial.",
+                "gold": "¡Eficiencia Lingüística! Al omitir el 'go to' en rutinas, demuestras que has asimilado las estructuras más naturales del inglés."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U2_TAKE_HAVE",
+            "tema": "Collocations",
+            "niveles_exito": {
+                "bronze": "¡'HAVE' es el verbo de las rutinas! ¡Estupendo! 🛁",
+                "silver": "¡Exacto! Usaste **'HAVE'** (have a shower/bath) en lugar de 'take'. ¡Conoces las collocations clave!",
+                "gold": "¡Conocimiento Esencial! Has usado 'HAVE' correctamente. Recordar estos 'pequeños hábitos' te da una gran estrella."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U2_COLLOCATIONS_1",
+            "tema": "Collocations",
+            "niveles_exito": {
+                "bronze": "¡La pareja perfecta de palabras! 🤝",
+                "silver": "¡Genial! Has unido el verbo correcto con el sustantivo. ¡Son un equipo invencible!",
+                "gold": "¡Has cazado una Collocation! Sabes que ciertas palabras 'van casadas' en inglés. Tu mensaje es claro y nativo."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U2_PLURAL_HOURS",
+            "tema": "Time",
+            "niveles_exito": {
+                "bronze": "¡Sujeto-Verbo-Plural, todo encaja! 🧩",
+                "silver": "¡Perfecto! Si el número es mayor a uno, has puesto **'hours'** con la 's' final. ¡Dominas el plural!",
+                "gold": "¡Acierto gramatical de oro! Has usado la forma plural correcta. ¡Prueba de que ves más allá del singular!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U2_COLLOCATIONS_2",
+            "tema": "Collocations",
+            "niveles_exito": {
+                "bronze": "¡Cama lista! ¡Verbo **MAKE**! 🛏️",
+                "silver": "¡Genial! Recordaste que la excepción para 'hacer la cama' es **'MAKE the bed'**.",
+                "gold": "¡Collocation Expert! Diferenciar 'MAKE the bed' de 'DO homework' es un hito importante. ¡Felicidades!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U2_COLLOCATIONS_3",
+            "tema": "Collocations",
+            "niveles_exito": {
+                "bronze": "¡Es 'MAKE' para crear cosas! ¡Muy bien! 💡",
+                "silver": "¡Lo tienes! Para 'hacer' un error o un ruido, usaste el verbo **'MAKE'**.",
+                "gold": "¡Maestro de la Creación! Distinguiste que 'MAKE' se usa para cosas que se 'producen'. ¡Nivel avanzado de 'DO vs MAKE'!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U3_PREP_AT_IN",
+            "tema": "Prepositions of Place",
+            "niveles_exito": {
+                "bronze": "¡Ubicación precisa! ¡Preposición 'IN' acertada! 📍",
+                "silver": "¡Muy bien! Usaste **'IN'** para indicar que alguien está dentro de un lugar grande (in the park, in the city).",
+                "gold": "¡Experto en Preposiciones! Reconoces que 'IN' se usa para un área o contenedor, mientras que 'AT' es más para un punto específico."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U3_WORK_STUDY",
+            "tema": "Vocabulary (Jobs)",
+            "niveles_exito": {
+                "bronze": "¡Verbo de acción de trabajo correcto! 🧑‍💼",
+                "silver": "¡Exacto! Usaste el verbo **'WORK'** para describir la profesión de alguien.",
+                "gold": "¡Bravo! Diferencias perfectamente entre 'WORK' (trabajar) y 'STUDY' (estudiar). ¡Has superado un obstáculo común!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U3_WORK_PREP",
+            "tema": "Prepositions of Place",
+            "niveles_exito": {
+                "bronze": "¡Gran uso de la preposición **AT**!",
+                "silver": "¡Lo hiciste bien! Utilizaste **'AT'** para un lugar de trabajo específico (at the museum).",
+                "gold": "¡Nivel de detalle! Usar 'AT' es más preciso que 'IN' para lugares concretos de trabajo. ¡Felicidades!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U3_ARTICLE_JOBS",
+            "tema": "Articles",
+            "niveles_exito": {
+                "bronze": "¡El artículo es un pequeño héroe! 🦸‍♂️",
+                "silver": "¡Excelente! Has puesto el artículo **'A'** o **'AN'** antes del nombre de la profesión.",
+                "gold": "¡Dato Curioso de Oro! Recordaste que en inglés, a diferencia del español, ¡siempre se pone 'A/AN' delante de un trabajo!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U3_WHO_WHAT",
+            "tema": "Question Words",
+            "niveles_exito": {
+                "bronze": "¡La palabra clave de la pregunta está genial! ❓",
+                "silver": "¡Perfecto! Para preguntar por la profesión, usaste **'WHAT'** (What is your dad?).",
+                "gold": "¡Asombroso! Al usar 'WHAT', demuestras que has entendido el concepto de 'qué hace' vs 'quién es'. ¡Detective de profesiones!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U3_PREP_ON_IN",
+            "tema": "Prepositions of Place",
+            "niveles_exito": {
+                "bronze": "¡Preposición **IN** para el lugar grande! 🗺️",
+                "silver": "¡Exacto! Usaste **'IN'** para hablar de trabajar en un área grande (in a city, in a farm).",
+                "gold": "¡Uso Contextual! Reconoces que 'ON' es para superficies y 'IN' para áreas. ¡Tu elección es precisa!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U4_FEELINGS_HAVE",
+            "tema": "Feelings",
+            "niveles_exito": {
+                "bronze": "¡El verbo 'to be' está en modo emoción! 😃",
+                "silver": "¡Genial! Has usado el verbo **'TO BE'** para expresar frío, calor o hambre. ¡Evitaste la trampa del español!",
+                "gold": "¡Refuerzo de oro! Has internalizado que en inglés se *es* la sensación (I *am* hungry) y no se *tiene*. ¡Piensas como un nativo!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U4_ARTICLE_AILMENT",
+            "tema": "Articles",
+            "niveles_exito": {
+                "bronze": "¡'A' para un dolor! ¡Muy bien el artículo! 🩹",
+                "silver": "¡Claro y conciso! Has usado el artículo **'A'** al hablar de un dolor (I have *a* headache).",
+                "gold": "¡Acierto experto! No olvidaste que las enfermedades y dolores *contables* necesitan el artículo 'A'."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U4_SORE_THROAT",
+            "tema": "Vocabulary (Health)",
+            "niveles_exito": {
+                "bronze": "¡Expresión de dolor de garganta correcta! 🗣️",
+                "silver": "¡Bien hecho! Usaste la expresión fija **'a sore throat'**. ¡Conoces las combinaciones exactas!",
+                "gold": "¡Victoria de vocabulario! El término 'sore throat' demuestra que has memorizado las expresiones médicas clave."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U4_FEEL_AM",
+            "tema": "Feelings",
+            "niveles_exito": {
+                "bronze": "¡Verbo 'To Be' en modo Sentimiento! 😄",
+                "silver": "¡Genial! Para describir tu estado de ánimo, has usado el verbo **'TO BE'**.",
+                "gold": "¡Dominio de los Adjetivos! Has utilizado la forma contraída (I'm) y el verbo 'to be'. ¡Muestras fluidez!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U4_BODY_PARTS_PLURAL",
+            "tema": "Plurals",
+            "niveles_exito": {
+                "bronze": "¡El plural es tu amigo! ¡Bien puesto! 🦵🦵",
+                "silver": "¡Correcto! Usaste la forma **plural** (legs, teeth) para partes del cuerpo que tenemos más de una.",
+                "gold": "¡Visión de Rayos-X! Has detectado cuándo usar el plural para las partes del cuerpo. ¡Superhéroe lingüístico!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U4_HEALTH_PLURAL",
+            "tema": "Singular/Plural",
+            "niveles_exito": {
+                "bronze": "¡Singular con 'A'! ¡No hay 'S' extra! 🚫",
+                "silver": "¡Muy bien! Si pones el artículo **'A'**, el sustantivo va en singular. ¡La 'S' no hace falta!",
+                "gold": "¡Consistencia Gramatical de Oro! Has logrado la coherencia entre el artículo singular y el sustantivo singular."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U5_MORE_SHORT_ADJ",
+            "tema": "Comparatives",
+            "niveles_exito": {
+                "bronze": "¡Solo **-ER**! ¡Ahorras palabras! ✏️",
+                "silver": "¡Fantástico! Recordaste que los adjetivos cortos solo necesitan añadir **-ER**.",
+                "gold": "¡Estructura Compacta de Oro! Al usar solo el '-ER', demuestras que conoces la regla básica de comparación."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U5_OMISSION_THAN",
+            "tema": "Comparatives",
+            "niveles_exito": {
+                "bronze": "¡La palabra **THAN** es el conector! 🔗",
+                "silver": "¡Lo encontraste! Usaste la palabra **'THAN'** para conectar las dos partes de la comparación.",
+                "gold": "¡Unión Perfecta! 'THAN' es la pieza clave que sella la comparación. ¡Sigue coleccionando estrellas!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U5_ER_LONG_ADJ",
+            "tema": "Comparatives",
+            "niveles_exito": {
+                "bronze": "¡El adjetivo largo lleva **MORE**! ¡Genial! 🤩",
+                "silver": "¡Bravo! Para adjetivos largos, usaste **'MORE'** delante, ¡sin añadir el '-ER'!",
+                "gold": "¡Regla de la Extensión Dominada! Sabes que si el adjetivo tiene muchas sílabas, 'MORE' es el campeón."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U5_DOUBLE_COMP",
+            "tema": "Comparatives",
+            "niveles_exito": {
+                "bronze": "¡Una comparación, un solo método! ¡Bien hecho! 🥳",
+                "silver": "¡Felicidades! Evitaste usar 'more' **y** '-er' a la vez. ¡Usaste solo uno!",
+                "gold": "¡Precisión de Cirujano! Al evitar la doble comparación, tu frase es 100% correcta."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U5_IRREGULAR_COMP",
+            "tema": "Comparatives",
+            "niveles_exito": {
+                "bronze": "¡Esos adjetivos rebeldes! ¡Los has capturado! 🏅",
+                "silver": "¡Increíble! Usaste **'BETTER'** o **'WORSE'**. ¡Recordaste las formas irregulares!",
+                "gold": "¡Memoria de Elefante! Recordar las formas irregulares es un signo de excelencia."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U5_COMP_SPELLING_1",
+            "tema": "Spelling",
+            "niveles_exito": {
+                "bronze": "¡Ortografía de Comparativos Perfecta! ✍️",
+                "silver": "¡Excelente! Recordaste la regla C-V-C: duplicaste la última letra (*bigger*).",
+                "gold": "¡Hechizo Ortográfico! Conoces la regla de duplicar la consonante. ¡Puntos extra!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U5_COMP_HAPPY_Y",
+            "tema": "Spelling",
+            "niveles_exito": {
+                "bronze": "¡Adiós a la 'Y'! ¡Hola 'I'! 👋",
+                "silver": "¡Perfecto! Aplicaste la regla de la 'Y': la cambiaste por **'I'** antes de añadir '-ER'.",
+                "gold": "¡Transformación Exitosa! Cambiar la 'Y' por una 'I' es una regla crucial. ¡Bien hecho!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U6_WAS_WERE_PRONOUN",
+            "tema": "Past Simple",
+            "niveles_exito": {
+                "bronze": "¡Conjugación en pasado correcta! ¡Estrella ganada! ⭐",
+                "silver": "¡Muy bien! Usaste **'WAS'** con singulares y **'WERE'** con plurales. ¡No los mezclaste!",
+                "gold": "¡Maestro del Pasado Simple! Entiendes que 'WAS/WERE' es el pasado de 'TO BE'."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U6_PAST_INF",
+            "tema": "Past Simple",
+            "niveles_exito": {
+                "bronze": "¡El pasado es tu presente! ¡Verbo correcto! ⏳",
+                "silver": "¡Acertaste! Al ver la palabra clave de tiempo (yesterday), usaste **'WAS' o 'WERE'**.",
+                "gold": "¡Lector de Pistas de Oro! Identificaste la clave de tiempo y ajustaste el verbo automáticamente."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U6_PAST_NEG",
+            "tema": "Past Simple",
+            "niveles_exito": {
+                "bronze": "¡Negación directa y fuerte! 🛡️",
+                "silver": "¡Correcto! **wasn't/weren't** sin auxiliares extra.",
+                "gold": "¡Eficiencia Negativa! Sabes que 'to be' se niega solo. ¡Demuestras fuerza gramatical!"
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U6_PAST_OMISSION_BE",
+            "tema": "Past Simple",
+            "niveles_exito": {
+                "bronze": "¡El verbo de 'ser/estar' está ahí! ¡Necesario! 🏆",
+                "silver": "¡Excelente! No olvidaste el verbo **'WAS/WERE'** entre el sujeto y el adjetivo.",
+                "gold": "¡Dominio del Verbo Escondido! Incluso en pasado, has recordado que necesitas ese verbo 'pegamento'."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U6_PAST_Q_ORDER",
+            "tema": "Past Simple (Questions)",
+            "niveles_exito": {
+                "bronze": "¡Orden de pregunta perfecto! 👏",
+                "silver": "¡Muy bien! Ordenaste la pregunta con el verbo **'WAS/WERE' antes del sujeto**.",
+                "gold": "¡Fluidez de Pregunta! Al poner la 'W-H word', el 'WAS/WERE' y luego el sujeto, demuestras fluidez."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U6_PAST_DO_DID",
+            "tema": "Past Simple",
+            "niveles_exito": {
+                "bronze": "¡Sin mezclar auxiliares! ¡Genial! 🥳",
+                "silver": "¡Acertaste! No mezclaste 'WAS/WERE' con 'DID'.",
+                "gold": "¡Independencia Gramatical! Reconoces la naturaleza independiente de 'TO BE' en pasado."
+            }
+        },
+        {
+            "id_success": "SUCCESS_G4_U6_PAST_YES_NO_Q",
+            "tema": "Past Simple (Questions)",
+            "niveles_exito": {
+                "bronze": "¡Pregunta de sí/no bien estructurada! 👍",
+                "silver": "¡Bravo! Empezaste la pregunta con **'WAS' o 'WERE'**. ¡Sigue el patrón!",
+                "gold": "¡Pionero de Preguntas! Dominas la inversión sujeto-verbo en pasado."
+            }
+        }
+    ]
+}

@@ -1,9 +1,18 @@
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Home, User, Wand2, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import LandingPage from './components/LandingPage';
 import StudentProfile from './components/StudentProfile';
 import WorksheetGenerator from './components/WorksheetGenerator';
+import ResourceHub from './components/ResourceHub';
+import ExamRoadmap from './components/ExamRoadmap';
+import DiagnosticDashboard from './components/diagnostic/DiagnosticDashboard';
+import DiagnosticReport from './components/diagnostic/DiagnosticReport';
+import EarlyDetectionPrimary from './components/EarlyDetectionPrimary';
+import EarlyDetectionGames from './components/EarlyDetectionGames';
+import PromptTester from './components/PromptTester';
+import TutorAI from './components/tutor/TutorAI';
+import AdminIngestPanel from './components/admin/AdminIngestPanel';
+import { Home, User, Wand2, Library, Menu, X, Calendar, Activity, MessageSquare } from 'lucide-react';
 
 // Navigation Component
 const Navbar = () => {
@@ -32,11 +41,17 @@ const Navbar = () => {
             <Link to="/" className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${isActive('/')}`}>
               <Home size={18} /> Inicio
             </Link>
+            <Link to="/profile" className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${isActive('/profile')}`}>
+              <User size={18} /> NeuroPerfil
+            </Link>
+            <Link to="/tutor" className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${isActive('/tutor')}`}>
+              <MessageSquare size={18} className={location.pathname.includes('/tutor') ? 'text-green-600' : ''} /> Tutor IA
+            </Link>
             <Link to="/generator" className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${isActive('/generator')}`}>
               <Wand2 size={18} className={location.pathname === '/generator' ? 'text-purple-600' : ''} /> Generador IA
             </Link>
-            <Link to="/profile" className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${isActive('/profile')}`}>
-              <User size={18} /> Perfil
+            <Link to="/hub" className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${isActive('/hub')}`}>
+              <Library size={18} /> Hub de Aprendizaje
             </Link>
           </div>
 
@@ -54,8 +69,10 @@ const Navbar = () => {
         <div className="md:hidden bg-white border-b border-gray-100 shadow-xl absolute w-full z-50">
           <div className="px-4 pt-2 pb-4 space-y-2">
             <Link to="/" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-medium ${isActive('/')}`}>Inicio</Link>
+            <Link to="/profile" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-medium ${isActive('/profile')}`}>NeuroPerfil</Link>
+            <Link to="/tutor" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-medium ${isActive('/tutor')}`}>Tutor IA</Link>
             <Link to="/generator" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-medium ${isActive('/generator')}`}>Generador IA</Link>
-            <Link to="/profile" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-medium ${isActive('/profile')}`}>Perfil</Link>
+            <Link to="/hub" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-medium ${isActive('/hub')}`}>Hub de Aprendizaje</Link>
           </div>
         </div>
       )}
@@ -63,16 +80,43 @@ const Navbar = () => {
   );
 };
 
+import ResetOnboarding from './components/ResetOnboarding';
+
 function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
         <Navbar />
+        <ResetOnboarding />
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/profile" element={<StudentProfile />} />
             <Route path="/generator" element={<WorksheetGenerator />} />
+            <Route path="/hub" element={<ResourceHub />} />
+            <Route path="/exams" element={<ExamRoadmap />} />
+
+            {/* Diagnostic Module Routes */}
+            <Route path="/diagnostic" element={<DiagnosticDashboard />} />
+            {/* Note: In a real app, these would be nested routes or protected */}
+            <Route path="/diagnostic/screening" element={<EarlyDetectionPrimary studentId="guest" onComplete={(action) => {
+              if (action === 'GAMES') {
+                window.location.href = '/diagnostic/games';
+              } else {
+                window.location.href = '/diagnostic';
+              }
+            }} />} />
+            <Route path="/diagnostic/games" element={<EarlyDetectionGames studentId="guest" onBack={() => window.location.href = '/diagnostic'} />} />
+            <Route path="/diagnostic/report" element={<DiagnosticReport />} />
+
+            {/* Tutor IA Route */}
+            <Route path="/tutor" element={<TutorAI />} />
+
+            {/* Testing Route - TEMPORAL */}
+            <Route path="/test-prompt" element={<PromptTester />} />
+
+            {/* Admin Routes - HIDDEN */}
+            <Route path="/admin/ingest" element={<AdminIngestPanel />} />
           </Routes>
         </main>
       </div>
