@@ -1,10 +1,10 @@
 import { supabase } from '../supabaseClient';
 
 // Importación de Generadores Deterministas
-import { generarVocabulary, resetearVocabularioUsado } from './english-vocabulary-4primaria.js';
-import { generarTranslation, resetearTraduccionesUsadas } from './english-translation-challenge-4primaria.js';
+import { generarVocabulario, resetearPalabrasUsadas as resetVocab } from './english-vocabulary-4primaria.js';
+import { generarTranslationChallenge as generarTranslation, resetearEjerciciosUsados as resetTrans } from './english-translation-challenge-4primaria.js';
 import { generarMixedTenses, resetearEjerciciosUsados as resetMixed } from './english-mixed-tenses-4primaria.js';
-import { generarPresentSimple, resetearPresenteUsado } from './english-present-simple-4primaria.js';
+import { generarPresentSimple, resetearEjerciciosUsados as resetPres } from './english-present-simple-4primaria.js';
 import { generarPresentContinuous } from './english-present-continuous-4primaria.js';
 import { generarPastSimpleVerbs } from './english-past-simple-verbs-4primaria.js';
 import { generarVerbToBe } from './english-verb-tobe-4primaria.js';
@@ -21,7 +21,7 @@ import { generarArticles } from './english-articles-4primaria.js';
 import { generarQuantifiersMix } from './english-quantifiers-mix-4primaria.js';
 
 const GENERADORES = {
-    vocabulary: generarVocabulary,
+    vocabulary: generarVocabulario,
     translation_practice: generarTranslation,
     mixed_tenses: generarMixedTenses,
     present_simple: generarPresentSimple,
@@ -274,10 +274,10 @@ export async function generarFichaInglesCompleta(config = {}) {
     console.log(`🛠️ [ENGLISH] Generando modo Determinista: tipos=[${tipos}], dificultad=${dificultad}`);
 
     // Resetear estados
-    resetearVocabularioUsado();
-    resetearTraduccionesUsadas();
+    resetVocab();
+    resetTrans();
     resetMixed();
-    resetearPresenteUsado();
+    resetPres();
 
     const ejercicios = [];
     for (let i = 0; i < numQuestions; i++) {
