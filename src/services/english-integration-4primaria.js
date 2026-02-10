@@ -124,9 +124,18 @@ export async function generarFichaInglesCompleta(config = {}) {
 
         // 5. RENDERIZACIÓN A FORMATO ESTÁNDAR PARA INTERACTIVEWORKSHEET
         const cleanExercises = finalSelection.map((ex, idx) => {
-            const text = (ex.question_text || '');
+            let text = (ex.question_text || '');
+
+            // 🧼 LIMPIEZA DE IDs: Si el texto contiene el ID de la base de datos (UUID), lo quitamos
+            if (ex.id) {
+                text = text.replace(new RegExp(ex.id, 'g'), '');
+            }
+            // También quitar cualquier prefijo de ID numérico o hash que a veces se cuela
+            text = text.replace(/^[0-9a-fA-F-]{8,}\s*/, '');
+            text = text.trim();
+
             const lowerText = text.toLowerCase();
-            const dbType = (ex.question_type || '').toLowerCase(); // Nuevo: Prioridad columna DB
+            const dbType = (ex.question_type || '').toLowerCase();
             const metaType = (ex.metadata?.tipo || '').toLowerCase();
 
             // Detección inteligente de Tipos VIP
@@ -137,7 +146,7 @@ export async function generarFichaInglesCompleta(config = {}) {
             const hasVerbBracket = /\(\w+\)/.test(normalizedText) && !hasOptions;
 
             let isFillBlanks = dbType === 'fill_blanks' || hasGaps || hasOptions || hasVerbBracket;
-            let uiType = dbType || 'text_input'; // Por defecto usamos el tipo de la DB
+            let uiType = dbType || 'text_input';
             let words = [];
             let displayText = normalizedText;
 
@@ -161,66 +170,56 @@ export async function generarFichaInglesCompleta(config = {}) {
                     if (match) words = [match[1], match[2]].sort(() => Math.random() - 0.5);
                     displayText = normalizedText.replace(/\(\w+\/\w+\)/g, hasGaps ? '' : '___').trim();
                 } else {
+                    // Si es fill_blanks necesitamos un banco de palabras
                     const rawBank = ex.metadata?.word_bank || ex.correct_answer?.split(',').map(s => s.trim()) || [];
                     words = rawBank.length > 0 ? [...rawBank] : [];
 
-                    // 🎯 INYECCIÓN DE DISTRACTORES INTELIGENTES
-                    if (words.length === 1) {
-                        const correct = words[0].toLowerCase();
-                        const distractors = new Set();
-                        if (correct.endsWith('s')) {
-                            distractors.add(correct.endsWith('es') ? correct.replace(/es$/, '') : correct.replace(/s$/, ''));
-                            if (correct === 'does') distractors.add('do');
-                            if (correct === 'goes') distractors.add('go');
-                        } else {
-                            distractors.add(correct + 's');
-                            if (correct === 'do') distractors.add('does');
-                            if (correct === 'go') distractors.add('goes');
-                            if (correct === 'have') distractors.add('has');
+                    // 🎯 INYECCIÓN DE DISTRACTORES SI FALTA BANCO
+                    if (words.length <= 1) {
+                        const correct = (words[0] || ex.correct_answer || '').toLowerCase().trim();
+                        if (correct) {
+                            const distractors = new Set();
+                            if (correct.endsWith('s')) {
+                                distractors.add(correct.endsWith('es') ? correct.replace(/es$/, '') : correct.replace(/s$/, ''));
+                                if (correct === 'does') distractors.add('do');
+                                if (correct === 'goes') distractors.add('go');
+                            } else {
+                                distractors.add(correct + 's');
+                                if (correct === 'do') distractors.add('does');
+                                if (correct === 'go') distractors.add('goes');
+                                if (correct === 'have') distractors.add('has');
+                            }
+                            const auxPool = ['am', 'is', 'are'];
+                            if (auxPool.includes(correct)) {
+                                auxPool.filter(v => v !== correct).forEach(v => distractors.add(v));
+                            }
+                            distractors.forEach(d => { if (d && d !== correct) { if (words.length < 3) words.push(d); } });
                         }
-                        const auxPool = ['am', 'is', 'are'];
-                        if (auxPool.includes(correct)) {
-                            auxPool.filter(v => v !== correct).forEach(v => distractors.add(v));
-                        }
-                        const prepPool = ['at', 'in', 'on', 'to', 'for', 'the'];
-                        if (prepPool.includes(correct)) {
-                            prepPool.filter(p => p !== correct).sort(() => Math.random() - 0.5).slice(0, 2).forEach(p => distractors.add(p));
-                        }
-                        distractors.forEach(d => { if (d && d !== correct) words.push(d); });
                     }
-                    words = words.sort(() => Math.random() - 0.5);
-                    if (hasVerbBracket) displayText = normalizedText.replace(/\(\w+\)/g, hasGaps ? '' : '___').trim();
+
+                    if (words.length === 0) {
+                        // Si no hay forma de hacer un banco, lo dejamos en text_input para no romper el componente
+                        uiType = 'text_input';
+                    } else {
+                        words = words.sort(() => Math.random() - 0.5);
+                        if (hasVerbBracket) displayText = normalizedText.replace(/\(\w+\)/g, hasGaps ? '' : '___').trim();
+                    }
                 }
             }
-            // 3. LÓGICA AUTO-MULTIPLE CHOICE (Para vocabulario sin huecos)
+            // 3. LÓGICA AUTO-MULTIPLE CHOICE
             else if (dbType === 'multiple_choice' || metaType.includes('vocab') || lowerText.includes('phrase:') || lowerText.includes('adverb:') || lowerText.includes('significa') || lowerText.includes('translate')) {
                 uiType = 'multiple_choice';
                 const correct = ex.correct_answer;
 
-                // Si la DB ya trae opciones, las usamos
                 if (ex.options && ex.options.length > 0) {
                     words = ex.options;
                 } else {
-                    // Sacar distractores de otras respuestas de la misma unidad
                     const otherAnswers = uniqueQuestions
                         .filter(q => q.correct_answer && q.correct_answer !== correct && q.correct_answer.length < 25)
                         .map(q => q.correct_answer.split(',')[0].trim());
 
                     const distractors = [...new Set(otherAnswers)].sort(() => Math.random() - 0.5).slice(0, 3);
                     words = [correct, ...distractors].sort(() => Math.random() - 0.5);
-                }
-            }
-
-            // 4. LÓGICA VIP (classification, connector, voice, scanner)
-            if (['classification', 'connector', 'voice', 'scanner'].includes(dbType)) {
-                uiType = dbType;
-                if (dbType === 'classification') {
-                    displayText = text;
-                    words = ex.options || []; // Buckets/Items
-                }
-                if (dbType === 'connector') {
-                    // El componente connector espera pares en correct_answer o metadata
-                    words = ex.metadata?.pairs || [];
                 }
             }
 
@@ -231,7 +230,7 @@ export async function generarFichaInglesCompleta(config = {}) {
                 question_text: text,
                 correct_answer: ex.correct_answer,
                 options: words,
-                words: words, // Por compatibilidad
+                words: words,
                 items: dbType === 'classification' ? (ex.options || []) : [],
                 buckets: dbType === 'classification' ? (ex.metadata?.buckets || []) : [],
                 pairs: dbType === 'connector' ? (ex.metadata?.pairs || []) : [],
@@ -249,6 +248,7 @@ export async function generarFichaInglesCompleta(config = {}) {
                     unit: unitId
                 }
             };
+
 
         });
 
