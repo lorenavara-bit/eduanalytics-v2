@@ -25,24 +25,22 @@ export const FeedbackDiamante = {
         };
     },
 
-    /**
-     * Evalúa un fragmento (Fill in the blanks).
-     */
     evaluateFragment: async (userInput, correctAnswer, variations = [], studentId, ruleId, manualExplanation) => {
-        const clean = (str) => (str || '').trim().toLowerCase();
+        const clean = (str) => (str || '')
+            .toLowerCase()
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
 
-        // Si tenemos una explicación manual del profesor, la priorizamos
-        const finalExplanation = manualExplanation;
-
-        const allCorrect = [correctAnswer, ...variations].map(v => clean(v));
         const userClean = clean(userInput);
+        const allCorrect = [correctAnswer, ...variations].map(v => clean(v));
 
         if (allCorrect.includes(userClean)) {
             return { isCorrect: true, feedback: '¡Perfecto!', level: 'diamante' };
         }
 
         // Si falla, buscamos feedback experto
-        const feedbackData = await getAdvancedFeedback(studentId, ruleId, finalExplanation);
+        const feedbackData = await getAdvancedFeedback(studentId, ruleId, manualExplanation);
 
         return {
             isCorrect: false,

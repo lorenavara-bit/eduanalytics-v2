@@ -484,70 +484,97 @@ function convertEnglishToWorksheetFormat(ficha) {
     const sections = [{
         title: ficha.titulo,
         questions: ficha.ejercicios.map((ej, idx) => {
+            // Base fields shared by ALL question types
             const baseQuestion = {
                 id: ej.id,
                 number: idx + 1,
-                // ...
-                text: ej.pregunta || ej.text,
+                text: ej.text || ej.pregunta || ej.question_text || '',
+                question_text: ej.question_text || ej.text || '',
+                subject: ficha.asignatura || 'Inglés',
                 explanation: ej.explanation || ej.explicacion || 'Revisa este contenido.',
                 difficulty: ej.difficulty || ej.dificultad || 'media',
+                correct_answer: ej.correct_answer || ej.correcta || ej.respuesta || '',
+                competencias: ej.competencias || ['CP', 'CPSAA'],
+                criterio_evaluacion: ej.criterio_evaluacion || '',
                 metadata: {
-                    tipo_ejercicio: ej.question_type || ej.type,
+                    ...(ej.metadata || {}),
+                    tipo_ejercicio: ej.type || ej.question_type,
                     tema: ej.tema,
-                    source: ej.metadata?.source || 'Santillana DB'
+                    source: ej.metadata?.source || 'Santillana DB',
+                    rule_id: ej.metadata?.rule_id,
+                    explicacionDiamante: ej.metadata?.explicacionDiamante || ej.explanation
                 }
             };
 
-            // Determinar el tipo de pregunta y añadir campos específicos
-            const questionType = ej.question_type || ej.type || 'multiple_choice';
+            // Determine the UI type from the exercise
+            const questionType = ej.type || ej.question_type || 'multiple_choice';
 
             switch (questionType) {
-                case 'multiple_choice':
-                    return {
-                        ...baseQuestion,
-                        type: 'multiple_choice',
-                        options: ej.options || ej.opciones || [],
-                        correct_answer: ej.correcta
-                    };
-
-                case 'text_input':
-                    return {
-                        ...baseQuestion,
-                        type: 'text_input',
-                        correct_answer: ej.correcta,
-                        accept_variations: ej.accept_variations || [ej.correcta],
-                        case_sensitive: ej.case_sensitive !== undefined ? ej.case_sensitive : false,
-                        keywords_required: ej.keywords_required || null,
-                        sample_answer: ej.sample_answer || null,
-                        min_words: ej.min_words || null
-                    };
-
                 case 'word_order':
                     return {
                         ...baseQuestion,
                         type: 'word_order',
-                        words: ej.words,
-                        correct_answer: ej.correcta,
-                        correct_variations: ej.correct_variations || [ej.correcta]
+                        words: ej.words || [],
+                        correct_variations: ej.correct_variations || [baseQuestion.correct_answer]
                     };
 
                 case 'fill_blanks':
                     return {
                         ...baseQuestion,
                         type: 'fill_blanks',
-                        text: ej.text,
-                        word_bank: ej.word_bank,
-                        correct_answer: ej.correcta,
-                        accept_any_order: ej.accept_any_order !== undefined ? ej.accept_any_order : false
+                        text: ej.text || baseQuestion.text,
+                        word_bank: ej.words || ej.word_bank || ej.options || [],
+                        accept_any_order: ej.accept_any_order || false
                     };
 
+                case 'voice':
+                    return {
+                        ...baseQuestion,
+                        type: 'voice',
+                        ejercicio: ej.text || ej.question_text || '',
+                        respuesta: baseQuestion.correct_answer
+                    };
+
+                case 'classification':
+                    return {
+                        ...baseQuestion,
+                        type: 'classification',
+                        tipo_detalle: 'classification',
+                        items: ej.items || [],
+                        buckets: ej.buckets || [],
+                        options: ej.options || []
+                    };
+
+                case 'connector':
+                    return {
+                        ...baseQuestion,
+                        type: 'connector',
+                        tipo_detalle: 'connector',
+                        pairs: ej.pairs || []
+                    };
+
+                case 'scanner':
+                    return {
+                        ...baseQuestion,
+                        type: 'scanner',
+                        tipo_detalle: 'scanner'
+                    };
+
+                case 'text_input':
+                    return {
+                        ...baseQuestion,
+                        type: 'text_input',
+                        accept_variations: ej.accept_variations || [baseQuestion.correct_answer],
+                        case_sensitive: ej.case_sensitive || false,
+                        sample_answer: ej.sample_answer || null
+                    };
+
+                case 'multiple_choice':
                 default:
-                    // Fallback a multiple choice
                     return {
                         ...baseQuestion,
                         type: 'multiple_choice',
-                        options: ej.opciones || [],
-                        correct_answer: ej.correcta
+                        options: ej.options || ej.opciones || []
                     };
             }
         })
@@ -569,6 +596,7 @@ function convertEnglishToWorksheetFormat(ficha) {
         totalQuestions: ficha.ejercicios.length
     };
 }
+
 
 export default {
     shouldUseDeterministicGenerator,

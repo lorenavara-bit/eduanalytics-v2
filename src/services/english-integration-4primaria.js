@@ -101,7 +101,8 @@ export async function generarFichaInglesCompleta(config = {}) {
 
         if (error || !dbQuestions || dbQuestions.length === 0) {
             console.groupEnd();
-            throw new Error(`🚫 CONTENIDO NO DISPONIBLE: No hay ejercicios oficiales para "${topic}" en la DB. Cárgalos vía AdminPanel.`);
+            // 🚨 AGGRESSIVE PURGE: No hay fallback a IA para Santillana 4º
+            throw new Error(`🚫 CONTENIDO OFICIAL REQUERIDO: No hay ejercicios de Santillana en la DB para "${topic}". Por favor, sube el CSV correspondiente en el Panel de Admin.`);
         }
 
         // 3. DESDUPLICACIÓN EN MEMORIA
@@ -126,21 +127,118 @@ export async function generarFichaInglesCompleta(config = {}) {
         const cleanExercises = finalSelection.map((ex, idx) => {
             let text = (ex.question_text || '');
 
-            // 🧼 LIMPIEZA DE IDs: Si el texto contiene el ID de la base de datos (UUID), lo quitamos
-            if (ex.id) {
-                text = text.replace(new RegExp(ex.id, 'g'), '');
-            }
-            // También quitar cualquier prefijo de ID numérico o hash que a veces se cuela
+            // 🧼 LIMPIEZA DE IDs DE CUARENTENA:
+            const uuidRegex = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/g;
+            text = text.replace(uuidRegex, '');
             text = text.replace(/^[0-9a-fA-F-]{8,}\s*/, '');
-            text = text.trim();
+            text = text.replace(/<[^>]*>/g, '').trim();
 
             const lowerText = text.toLowerCase();
             const dbType = (ex.question_type || '').toLowerCase();
             const metaType = (ex.metadata?.tipo || '').toLowerCase();
-
-            // Detección inteligente de Tipos VIP
-            const isOrder = dbType === 'word_order' || metaType.includes('order') || lowerText.includes('order') || lowerText.includes('orden');
             const normalizedText = text.replace(/_{3,}/g, '___');
+
+            // Parse metadata (handle string or object)
+            let meta = ex.metadata || {};
+            if (typeof meta === 'string') {
+                try { meta = JSON.parse(meta); } catch (e) { meta = {}; }
+            }
+
+            // Parse correct_answer for classification (could be JSON string)
+            let correctAnswer = ex.correct_answer || '';
+            if (dbType === 'classification' && typeof correctAnswer === 'string' && correctAnswer.startsWith('{')) {
+                try { correctAnswer = JSON.parse(correctAnswer); } catch (e) { /* keep as string */ }
+            }
+
+            // Parse options (pipe-separated string from CSV → array)
+            let rawOptions = ex.options || '';
+            let optionsArray = [];
+            if (typeof rawOptions === 'string' && rawOptions.includes('|')) {
+                optionsArray = rawOptions.split('|').map(o => o.trim()).filter(Boolean);
+            } else if (Array.isArray(rawOptions)) {
+                optionsArray = rawOptions;
+            }
+
+            // ==========================================
+            // 🎙️ VOICE - Early exit
+            // ==========================================
+            if (dbType === 'voice') {
+                return {
+                    id: ex.id,
+                    type: 'voice',
+                    text: text,
+                    question_text: text,
+                    correct_answer: ex.correct_answer,
+                    difficulty: ex.difficulty || 'media',
+                    explanation: meta.explicacionDiamante || ex.explanation || 'Practica tu pronunciación.',
+                    competencias: ['CP', 'CPSAA'],
+                    criterio_evaluacion: meta.criterio || 'Expresión Oral',
+                    metadata: { ...meta, source: 'Santillana DB', unit: meta.unit || (ex.topic || '').match(/Unit (\d+)/i)?.[1] ? `U${(ex.topic || '').match(/Unit (\d+)/i)?.[1]}` : null }
+                };
+            }
+
+            // ==========================================
+            // 🗂️ CLASSIFICATION - Early exit
+            // ==========================================
+            if (dbType === 'classification') {
+                return {
+                    id: ex.id,
+                    type: 'classification',
+                    text: text,
+                    question_text: text,
+                    correct_answer: correctAnswer,
+                    items: optionsArray,
+                    buckets: meta.buckets || [],
+                    options: optionsArray,
+                    difficulty: ex.difficulty || 'media',
+                    explanation: meta.explicacionDiamante || ex.explanation || 'Clasifica correctamente cada elemento.',
+                    competencias: ['CP', 'CPSAA'],
+                    criterio_evaluacion: meta.criterio || 'Comunicación Escrita',
+                    metadata: { ...meta, source: 'Santillana DB' }
+                };
+            }
+
+            // ==========================================
+            // 🔗 CONNECTOR - Early exit
+            // ==========================================
+            if (dbType === 'connector') {
+                return {
+                    id: ex.id,
+                    type: 'connector',
+                    text: text,
+                    question_text: text,
+                    correct_answer: ex.correct_answer,
+                    pairs: meta.pairs || [],
+                    difficulty: ex.difficulty || 'media',
+                    explanation: meta.explicacionDiamante || ex.explanation || 'Une las parejas correctas.',
+                    competencias: ['CP', 'CPSAA'],
+                    criterio_evaluacion: meta.criterio || 'Comunicación Escrita',
+                    metadata: { ...meta, source: 'Santillana DB' }
+                };
+            }
+
+            // ==========================================
+            // 🔍 SCANNER - Early exit
+            // ==========================================
+            if (dbType === 'scanner') {
+                return {
+                    id: ex.id,
+                    type: 'scanner',
+                    text: text,
+                    question_text: text,
+                    correct_answer: ex.correct_answer,
+                    difficulty: ex.difficulty || 'media',
+                    explanation: meta.explicacionDiamante || ex.explanation || 'Busca las palabras clave.',
+                    competencias: ['CP', 'CPSAA'],
+                    criterio_evaluacion: meta.criterio || 'Comprensión Lectora',
+                    metadata: { ...meta, source: 'Santillana DB' }
+                };
+            }
+
+            // ==========================================
+            // BELOW: word_order, fill_blanks, multiple_choice, text_input
+            // ==========================================
+            const isOrder = dbType === 'word_order' || metaType.includes('order') || lowerText.includes('order') || lowerText.includes('orden');
             const hasGaps = normalizedText.includes('___');
             const hasOptions = /\((\w+)\/(\w+)\)/.test(normalizedText);
             const hasVerbBracket = /\(\w+\)/.test(normalizedText) && !hasOptions;
@@ -157,8 +255,12 @@ export async function generarFichaInglesCompleta(config = {}) {
                     const cleanText = text.replace(/^(order|orden|ordena):\s*/i, '');
                     words = cleanText.split('/').map(w => w.trim());
                 } else {
-                    const answer = ex.correct_answer || '';
-                    words = answer.split(' ').filter(w => w.length > 0).sort(() => Math.random() - 0.5);
+                    const answer = (ex.correct_answer || '').trim();
+                    if (answer) {
+                        words = answer.split(' ').filter(w => w.length > 0).sort(() => Math.random() - 0.5);
+                    } else {
+                        uiType = 'text_input';
+                    }
                 }
                 displayText = 'Ordena las palabras para formar la frase correcta:';
             }
@@ -170,8 +272,7 @@ export async function generarFichaInglesCompleta(config = {}) {
                     if (match) words = [match[1], match[2]].sort(() => Math.random() - 0.5);
                     displayText = normalizedText.replace(/\(\w+\/\w+\)/g, hasGaps ? '' : '___').trim();
                 } else {
-                    // Si es fill_blanks necesitamos un banco de palabras
-                    const rawBank = ex.metadata?.word_bank || ex.correct_answer?.split(',').map(s => s.trim()) || [];
+                    const rawBank = meta.word_bank || ex.correct_answer?.split(',').map(s => s.trim()) || [];
                     words = rawBank.length > 0 ? [...rawBank] : [];
 
                     // 🎯 INYECCIÓN DE DISTRACTORES SI FALTA BANCO
@@ -198,7 +299,6 @@ export async function generarFichaInglesCompleta(config = {}) {
                     }
 
                     if (words.length === 0) {
-                        // Si no hay forma de hacer un banco, lo dejamos en text_input para no romper el componente
                         uiType = 'text_input';
                     } else {
                         words = words.sort(() => Math.random() - 0.5);
@@ -211,15 +311,73 @@ export async function generarFichaInglesCompleta(config = {}) {
                 uiType = 'multiple_choice';
                 const correct = ex.correct_answer;
 
-                if (ex.options && ex.options.length > 0) {
-                    words = ex.options;
+                if (optionsArray.length > 0) {
+                    words = optionsArray;
                 } else {
-                    const otherAnswers = uniqueQuestions
-                        .filter(q => q.correct_answer && q.correct_answer !== correct && q.correct_answer.length < 25)
-                        .map(q => q.correct_answer.split(',')[0].trim());
+                    // 🧠 PEDAGOGICAL DISTRACTOR ENGINE
+                    const correctLow = correct.toLowerCase().trim();
+                    const pedagogicalDistractors = new Set();
 
-                    const distractors = [...new Set(otherAnswers)].sort(() => Math.random() - 0.5).slice(0, 3);
-                    words = [correct, ...distractors].sort(() => Math.random() - 0.5);
+                    // 1. Morphological distractors (for short words/verbs)
+                    if (correctLow.length < 15) {
+                        if (correctLow.endsWith('s')) {
+                            const root = correctLow.endsWith('es') ? correctLow.replace(/es$/, '') : correctLow.replace(/s$/, '');
+                            pedagogicalDistractors.add(root);
+                        } else if (!correctLow.includes(' ')) {
+                            pedagogicalDistractors.add(correctLow + 's');
+                            pedagogicalDistractors.add(correctLow + 'es');
+                        }
+
+                        // Targeted daily routines (User's specific case)
+                        if (correctLow.includes('get dressed')) {
+                            pedagogicalDistractors.add(correctLow.replace('get dressed', 'dressed'));
+                            pedagogicalDistractors.add(correctLow.replace('get dressed', 'dress'));
+                        }
+                        if (correctLow.includes('wake up')) pedagogicalDistractors.add(correctLow.replace('wake up', 'woke up'));
+
+                        // Auxiliary/Verb confusion
+                        if (correctLow.includes('have')) {
+                            pedagogicalDistractors.add(correctLow.replace(/\bhave\b/g, 'has'));
+                            pedagogicalDistractors.add(correctLow.replace(/\bhave\b/g, 'having'));
+                        }
+                        if (correctLow.includes('has')) pedagogicalDistractors.add(correctLow.replace(/\bhas\b/g, 'have'));
+                        if (correctLow.includes('do')) pedagogicalDistractors.add(correctLow.replace(/\bdo\b/g, 'does'));
+                        if (correctLow.includes('does')) pedagogicalDistractors.add(correctLow.replace(/\bdoes\b/g, 'do'));
+
+                        // Verb To Be
+                        if (correctLow.includes(' am ')) pedagogicalDistractors.add(correctLow.replace(/\bam\b/g, 'is'));
+                        if (correctLow.includes(' is ')) pedagogicalDistractors.add(correctLow.replace(/\bis\b/g, 'are'));
+                        if (correctLow.includes(' are ')) pedagogicalDistractors.add(correctLow.replace(/\bare\b/g, 'is'));
+                    }
+
+                    // 2. Pool-based distractors (Filtered by word count similarity)
+                    const correctWordCount = correct.split(' ').length;
+                    const otherAnswers = uniqueQuestions
+                        .filter(q => q.correct_answer && q.correct_answer !== correct && q.correct_answer.length < 50)
+                        .map(q => q.correct_answer.split(',')[0].trim())
+                        .filter(ans => {
+                            const ansWords = ans.split(' ').length;
+                            return Math.abs(ansWords - correctWordCount) <= 1;
+                        });
+
+                    const poolDistractors = [...new Set(otherAnswers)].sort(() => Math.random() - 0.5);
+
+                    const finalDistractors = new Set([...pedagogicalDistractors]);
+                    poolDistractors.forEach(d => {
+                        if (finalDistractors.size < 3 && d.toLowerCase() !== correctLow) {
+                            finalDistractors.add(d);
+                        }
+                    });
+
+                    // Fallback to fill up to 3 distractors
+                    const fallbackPool = ['I go to school', 'It is ten o\'clock', 'He plays Art', 'She likes Science'];
+                    fallbackPool.sort(() => Math.random() - 0.5).forEach(f => {
+                        if (finalDistractors.size < 3 && f.toLowerCase() !== correctLow) {
+                            finalDistractors.add(f);
+                        }
+                    });
+
+                    words = [correct, ...finalDistractors].sort(() => Math.random() - 0.5);
                 }
             }
 
@@ -231,26 +389,23 @@ export async function generarFichaInglesCompleta(config = {}) {
                 correct_answer: ex.correct_answer,
                 options: words,
                 words: words,
-                items: dbType === 'classification' ? (ex.options || []) : [],
-                buckets: dbType === 'classification' ? (ex.metadata?.buckets || []) : [],
-                pairs: dbType === 'connector' ? (ex.metadata?.pairs || []) : [],
+                items: [],
+                buckets: [],
+                pairs: [],
                 difficulty: ex.difficulty || 'media',
-                explanation: ex.metadata?.explicacionDiamante || ex.explanation || `Repasa la estructura de la ${unitId || 'lección'}.`,
-                criterio_evaluacion: ex.metadata?.criterio || 'Comunicación Escrita y Expresión',
+                explanation: meta.explicacionDiamante || ex.explanation || 'Repasa este contenido.',
+                criterio_evaluacion: meta.criterio || 'Comunicación Escrita y Expresión',
                 competencias: ['CP', 'CPSAA'],
                 metadata: {
-                    ...ex.metadata,
-                    unit: ex.metadata?.unit || unitId,
+                    ...meta,
                     type: dbType || metaType,
                     source: 'Santillana DB',
-                    is_scramble: isOrder,
-                    success_pattern_id: ex.metadata?.success_pattern_id,
-                    unit: unitId
+                    is_scramble: isOrder
                 }
             };
 
-
         });
+
 
         console.groupEnd();
 
@@ -267,8 +422,14 @@ export async function generarFichaInglesCompleta(config = {}) {
     }
 
     // =================================================================================
-    // ⬇️ LÓGICA HÍBRIDA (Generadores Deterministas)
+    // ⬇️ LÓGICA HÍBRIDA (Generadores Deterministas) - DESACTIVADA PARA 4º PRIMARIA
     // ==========================================
+    const curso = config.profile?.grade_level || '4º Primaria';
+    if (curso === '4º Primaria') {
+        console.warn("⚠️ [PURGE] Intento de usar generador híbrido en 4º Primaria bloqueado.");
+        return await generarFichaInglesCompleta({ ...config, topic: topic || 'Unit 1: Back to school' });
+    }
+
     const { tipos = ['vocabulary'], dificultad = 'medio', categoria } = config;
 
     console.log(`🛠️ [ENGLISH] Generando modo Determinista: tipos=[${tipos}], dificultad=${dificultad}`);

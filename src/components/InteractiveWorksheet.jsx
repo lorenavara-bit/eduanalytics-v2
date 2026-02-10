@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { CheckCircle, XCircle, MessageSquare, Send, Loader2, Lightbulb, Award, Target, Brain, Compass, HelpCircle, Heart, ThumbsUp, RefreshCw, BookOpen, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, MessageSquare, Send, Loader2, Lightbulb, Award, Target, Brain, Compass, HelpCircle, Heart, ThumbsUp, RefreshCw, BookOpen, Clock, Trash2, Settings2 } from 'lucide-react';
 import WordOrderVip from './WordOrderVip';
 import FragmentVip from './FragmentVip';
 import ClassificationVip from './ClassificationVip';
@@ -15,6 +15,10 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId, enableT
     const [revealedHints, setRevealedHints] = useState({});
     const [savedQuestions, setSavedQuestions] = useState({});
     const [retryingIds, setRetryingIds] = useState([]);
+    const [discardedIds, setDiscardedIds] = useState([]);
+    const [editingId, setEditingId] = useState(null);
+    const [editForm, setEditForm] = useState(null);
+    const [localOverwrites, setLocalOverwrites] = useState({});
 
     const [startTime] = useState(Date.now());
     const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -62,6 +66,33 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId, enableT
             console.error("Error saving question:", e.message);
             alert("Error guardando pregunta: " + e.message);
         }
+    };
+
+    const discardQuestion = (qId) => {
+        setDiscardedIds(prev => [...prev, qId]);
+    };
+
+    const startEditing = (question) => {
+        setEditingId(question.id);
+        setEditForm({
+            text: question.text,
+            options: Array.isArray(question.options) ? [...question.options] : [],
+            correct_answer: question.correct_answer
+        });
+    };
+
+    const saveEdit = (qId) => {
+        setLocalOverwrites(prev => ({
+            ...prev,
+            [qId]: {
+                ...editForm,
+                // Mantener identificadores y tipos
+                id: qId,
+                question_text: editForm.text
+            }
+        }));
+        setEditingId(null);
+        setEditForm(null);
     };
 
     const handleRetryErrors = () => {
@@ -216,19 +247,26 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId, enableT
                             </div>
                         )}
 
-                        <div className="space-y-6">
-                            {section.questions?.map((q, qIdx) => {
-                                const isCorrect = correctionResult?.corrections?.[q.id]?.correct;
-                                const isWrong = correctionResult?.corrections?.[q.id]?.correct === false;
+                        {section.questions?.filter(q => !discardedIds.includes(q.id)).map((qOriginal, qIdx) => {
+                            // Apply local overwrites if they exist
+                            const q = localOverwrites[qOriginal.id] ? { ...qOriginal, ...localOverwrites[qOriginal.id] } : qOriginal;
 
-                                return (
-                                    <div key={q.id || `${sIdx}-${qIdx}`} className={`bg-white p-6 rounded-xl border-2 transition-all ${isCorrect ? 'border-green-200 bg-green-50' : isWrong ? 'border-red-200 bg-red-50' : 'border-gray-100 hover:border-blue-200 shadow-sm'}`}>
-                                        {/* Question Header */}
-                                        <div className="font-medium text-lg text-gray-800 flex gap-3 flex-1">
-                                            <span className="bg-blue-600 text-white w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold shrink-0 shadow-md">
+                            const isCorrect = correctionResult?.corrections?.[q.id]?.correct;
+                            const isWrong = correctionResult?.corrections?.[q.id]?.correct === false;
+                            const isEditing = editingId === q.id;
+
+                            return (
+                                <div key={q.id || `${sIdx}-${qIdx}`} className={`bg-white p-6 rounded-xl border-2 transition-all ${isCorrect ? 'border-green-200 bg-green-50' : isWrong ? 'border-red-200 bg-red-50' : 'border-gray-100 hover:border-blue-200 shadow-sm'}`}>
+                                    <div className="flex items-start gap-5 mb-4">
+                                        {/* Question Badge */}
+                                        <div className="shrink-0">
+                                            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white w-10 h-10 flex items-center justify-center rounded-2xl text-base font-black shadow-lg shadow-blue-100 ring-4 ring-white">
                                                 {qIdx + 1}
-                                            </span>
-                                            <div className="flex-1">
+                                            </div>
+                                        </div>
+
+                                        <div className="flex-1 min-w-0 pt-1">
+                                            <div className="text-xl font-bold text-slate-800 leading-tight">
                                                 {/* Reading Text (for reading comprehension) */}
                                                 {q.reading_text && (
                                                     <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-l-4 border-blue-500">
@@ -268,24 +306,23 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId, enableT
                                                         </div>
                                                     </div>
                                                 )}
-
-                                                <div dangerouslySetInnerHTML={{ __html: q.text }} />
+                                                <div className="prose prose-slate max-w-none text-slate-700 mt-2 mb-4" dangerouslySetInnerHTML={{ __html: q.text }} />
 
                                                 {/* LOMLOE Metadata for Question */}
                                                 {(q.criterio_evaluacion || q.competencias || q.nivel_bloom) && (
-                                                    <div className="mt-2 flex flex-wrap gap-1">
+                                                    <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-50 pt-3">
                                                         {q.criterio_evaluacion && (
-                                                            <span className="text-[10px] px-2 py-0.5 bg-green-50 text-green-700 rounded border border-green-200" title="Criterio de Evaluación LOMLOE">
+                                                            <span className="text-[10px] px-2 py-1 bg-emerald-50 text-emerald-700 rounded-lg border border-emerald-100 font-bold" title="Criterio de Evaluación LOMLOE">
                                                                 📋 {q.criterio_evaluacion}
                                                             </span>
                                                         )}
                                                         {q.competencias && q.competencias.length > 0 && (
-                                                            <span className="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-700 rounded border border-blue-200" title="Competencias Clave">
+                                                            <span className="text-[10px] px-2 py-1 bg-blue-50 text-blue-700 rounded-lg border border-blue-100 font-bold" title="Competencias Clave">
                                                                 🎯 {q.competencias.join(', ')}
                                                             </span>
                                                         )}
                                                         {q.nivel_bloom && (
-                                                            <span className="text-[10px] px-2 py-0.5 bg-purple-50 text-purple-700 rounded border border-purple-200" title="Nivel Cognitivo (Bloom)">
+                                                            <span className="text-[10px] px-2 py-1 bg-fuchsia-50 text-fuchsia-700 rounded-lg border border-fuchsia-100 font-bold" title="Nivel Cognitivo (Bloom)">
                                                                 🧠 {q.nivel_bloom}
                                                             </span>
                                                         )}
@@ -293,255 +330,330 @@ const InteractiveWorksheet = ({ data, onCorrect, studentId, worksheetId, enableT
                                                 )}
                                             </div>
                                         </div>
-
-                                        {/* Action Buttons: Correction Status + Save to Bank */}
-                                        <div className="flex flex-col items-center gap-2 shrink-0">
-                                            {isCorrect && <CheckCircle className="w-6 h-6 text-green-600" />}
-                                            {isWrong && <XCircle className="w-6 h-6 text-red-600" />}
-
-                                            {/* Save Button (Teacher-in-the-Loop) */}
-                                            <button
-                                                onClick={() => saveQuestionToBank(q)}
-                                                className={`p-1.5 rounded-full transition-all ${savedQuestions[q.id] ? 'bg-yellow-100 text-yellow-600' : 'text-gray-300 hover:bg-gray-100 hover:text-blue-500'}`}
-                                                title={savedQuestions[q.id] ? "Guardada en Banco de Preguntas" : "Guardar pregunta en mi Banco Local"}
-                                                disabled={savedQuestions[q.id]}
-                                            >
-                                                <ThumbsUp className={`w-5 h-5 ${savedQuestions[q.id] ? 'fill-current' : ''}`} />
-                                            </button>
-                                        </div>
                                     </div>
 
-                                        {/* Inputs based on Type */ }
-                                <div className="pl-11">
-                                    {/* Multiple Choice & True/False */}
-                                    {(q.type === 'multiple_choice' || q.type === 'true_false') && q.options && q.options.length > 0 && (
-                                        <div className="space-y-3">
-                                            {q.options.map((opt, oIdx) => (
-                                                <label key={oIdx} className="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-white/50 border border-transparent hover:border-gray-200 transition-colors">
-                                                    <input
-                                                        type="radio"
-                                                        name={`q-${q.id}`}
-                                                        className="w-5 h-5 text-blue-600 focus:ring-blue-500"
-                                                        checked={answers[q.id] === opt}
-                                                        onChange={() => handleAnswerChange(q.id, opt)}
-                                                        disabled={!!correctionResult && !retryingIds.includes(q.id)}
-                                                    />
-                                                    <span className="text-gray-700">{opt}</span>
-                                                </label>
-                                            ))}
-                                        </div>
-                                    )}
+                                    {/* Action Buttons: Correction Status + Save to Bank */}
+                                    <div className="flex flex-col items-center gap-2 shrink-0">
+                                        {isCorrect && <CheckCircle className="w-6 h-6 text-green-600" />}
+                                        {isWrong && <XCircle className="w-6 h-6 text-red-600" />}
 
-                                    {/* Text Input - Nivel DIFÍCIL */}
-                                    {q.type === 'text_input' && (
-                                        <div className="space-y-3">
-                                            <input
-                                                type="text"
-                                                autofocus
-                                                className="w-full p-4 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 bg-white transition-all text-lg font-semibold text-slate-800 shadow-sm"
-                                                placeholder="Escribe tu respuesta aquí..."
-                                                value={answers[q.id] || ''}
-                                                onChange={e => handleAnswerChange(q.id, e.target.value)}
-                                                disabled={!!correctionResult && !retryingIds.includes(q.id)}
-                                            />
-                                            {q.sample_answer && !correctionResult && (
-                                                <p className="text-xs text-slate-400 font-medium italic pl-1">
-                                                    💡 Ejemplo sugerido: "{q.sample_answer}"
-                                                </p>
-                                            )}
-                                        </div>
-                                    )}
+                                        {/* Save Button (Teacher-in-the-Loop) */}
+                                        <button
+                                            onClick={() => saveQuestionToBank(q)}
+                                            className={`p-1.5 rounded-full transition-all ${savedQuestions[q.id] ? 'bg-yellow-100 text-yellow-600' : 'text-gray-300 hover:bg-gray-100 hover:text-blue-500'}`}
+                                            title={savedQuestions[q.id] ? "Guardada en Banco de Preguntas" : "Guardar pregunta en mi Banco Local"}
+                                            disabled={savedQuestions[q.id]}
+                                        >
+                                            <ThumbsUp className={`w-5 h-5 ${savedQuestions[q.id] ? 'fill-current' : ''}`} />
+                                        </button>
 
-                                    {/* Word Order - Nivel VIP (Diamante) */}
-                                    {q.type === 'word_order' && q.words && (
-                                        <WordOrderVip
-                                            questionId={q.id}
-                                            words={q.words}
-                                            initialValue={answers[q.id]}
-                                            disabled={!!correctionResult && !retryingIds.includes(q.id)}
-                                            onAnswerChange={(id, val, metadata) => {
-                                                // Guardamos la respuesta y adjuntamos metadatos de proceso para el evaluador
-                                                setAnswers(prev => ({
-                                                    ...prev,
-                                                    [id]: val,
-                                                    [`${id}_process`]: metadata
-                                                }));
-                                            }}
-                                        />
-                                    )}
+                                        {/* Remake/Edit Button (New) */}
+                                        <button
+                                            onClick={() => startEditing(q)}
+                                            className="p-1.5 rounded-full text-gray-300 hover:bg-blue-50 hover:text-blue-500 transition-all"
+                                            title="Remake/Editar esta pregunta"
+                                        >
+                                            <Settings2 className="w-5 h-5" />
+                                        </button>
 
-                                    {/* Fill Blanks - Nivel MEDIO / VIP */}
-                                    {q.type === 'fill_blanks' && q.word_bank && (
-                                        <FragmentVip
-                                            questionId={q.id}
-                                            text={q.text}
-                                            wordBank={q.word_bank}
-                                            initialValue={answers[q.id]}
-                                            disabled={!!correctionResult && !retryingIds.includes(q.id)}
-                                            onAnswerChange={(id, val, metadata) => {
-                                                setAnswers(prev => ({
-                                                    ...prev,
-                                                    [id]: val,
-                                                    [`${id}_process`]: metadata
-                                                }));
-                                            }}
-                                        />
-                                    )}
+                                        {/* Discard Button (New) */}
+                                        <button
+                                            onClick={() => discardQuestion(q.id)}
+                                            className="p-1.5 rounded-full text-gray-300 hover:bg-red-50 hover:text-red-500 transition-all"
+                                            title="Descartar esta pregunta (se ocultará)"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                        </button>
+                                    </div>
 
-                                    {/* Voice Active - VIP Oral Mode */}
-                                    {q.type === 'voice' && (
-                                        <VoiceActiveVip
-                                            questionId={q.id}
-                                            instruction={q.ejercicio}
-                                            correctAnswer={q.correct_answer || q.respuesta}
-                                            initialValue={answers[q.id]}
-                                            disabled={!!correctionResult && !retryingIds.includes(q.id)}
-                                            onAnswerChange={(id, val, metadata) => {
-                                                setAnswers(prev => ({
-                                                    ...prev,
-                                                    [id]: val,
-                                                    [`${id}_process`]: metadata
-                                                }));
-                                            }}
-                                        />
-                                    )}
-
-                                    {/* Scanner - VIP Detective Highlighter */}
-                                    {q.type === 'scanner' && q.text && (
-                                        <ScannerVip
-                                            questionId={q.id}
-                                            text={q.text}
-                                            initialValue={answers[q.id]}
-                                            disabled={!!correctionResult && !retryingIds.includes(q.id)}
-                                            onAnswerChange={(id, val, metadata) => {
-                                                setAnswers(prev => ({
-                                                    ...prev,
-                                                    [id]: val,
-                                                    [`${id}_process`]: metadata
-                                                }));
-                                            }}
-                                        />
-                                    )}
-
-                                    {/* Connector - VIP Magnetic Bridges */}
-                                    {q.type === 'connector' && q.pairs && (
-                                        <ConnectorVip
-                                            questionId={q.id}
-                                            pairs={q.pairs}
-                                            initialValue={answers[q.id]}
-                                            disabled={!!correctionResult && !retryingIds.includes(q.id)}
-                                            onAnswerChange={(id, val, metadata) => {
-                                                setAnswers(prev => ({
-                                                    ...prev,
-                                                    [id]: val,
-                                                    [`${id}_process`]: metadata
-                                                }));
-                                            }}
-                                        />
-                                    )}
-
-                                    {/* Classification - VIP Magnetic Cubes */}
-                                    {q.type === 'classification' && q.items && q.buckets && (
-                                        <ClassificationVip
-                                            questionId={q.id}
-                                            items={q.items}
-                                            buckets={q.buckets}
-                                            initialValue={answers[q.id]}
-                                            disabled={!!correctionResult && !retryingIds.includes(q.id)}
-                                            onAnswerChange={(id, val, metadata) => {
-                                                setAnswers(prev => ({
-                                                    ...prev,
-                                                    [id]: val,
-                                                    [`${id}_process`]: metadata
-                                                }));
-                                            }}
-                                        />
-                                    )}
-
-                                    {/* Multi Input - Para listas de palabras (Santillana Style) */}
-                                    {q.type === 'multi_input' && q.items && (
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            {q.items.map((item, idx) => (
-                                                <div key={idx} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                                                    <span className="font-bold text-gray-700">{item.prefix || ''}</span>
+                                    {/* Edit Form (New) */}
+                                    {isEditing && (
+                                        <div className="mx-6 mb-6 p-4 bg-blue-50/50 rounded-xl border border-blue-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                                            <div className="flex items-center gap-2 mb-3 text-blue-700 font-bold text-sm">
+                                                <Settings2 className="w-4 h-4" />
+                                                Modo Edición / Remake
+                                            </div>
+                                            <div className="space-y-4">
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Enunciado</label>
                                                     <input
                                                         type="text"
-                                                        className="flex-1 p-2 border-2 border-blue-200 rounded-lg focus:border-blue-500 bg-white text-sm"
-                                                        placeholder={item.placeholder || '...'}
-                                                        value={(answers[q.id] && answers[q.id][idx]) || ''}
-                                                        onChange={e => {
-                                                            const current = answers[q.id] || new Array(q.items.length).fill('');
-                                                            const next = [...current];
-                                                            next[idx] = e.target.value;
-                                                            handleAnswerChange(q.id, next);
-                                                        }}
-                                                        disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                        value={editForm.text}
+                                                        onChange={(e) => setEditForm({ ...editForm, text: e.target.value })}
+                                                        className="w-full px-3 py-2 bg-white border border-blue-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                                                     />
-                                                    <span className="font-bold text-gray-700">{item.suffix || ''}</span>
                                                 </div>
-                                            ))}
+
+                                                {Array.isArray(editForm.options) && editForm.options.length > 0 && (
+                                                    <div className="space-y-2">
+                                                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Opciones / Distractores</label>
+                                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                            {editForm.options.map((opt, oIdx) => (
+                                                                <input
+                                                                    key={oIdx}
+                                                                    type="text"
+                                                                    value={opt}
+                                                                    onChange={(e) => {
+                                                                        const newOpts = [...editForm.options];
+                                                                        newOpts[oIdx] = e.target.value;
+                                                                        setEditForm({ ...editForm, options: newOpts });
+                                                                    }}
+                                                                    className="px-3 py-2 bg-white border border-blue-100 rounded-lg text-xs"
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                <div className="flex justify-end gap-2 pt-2">
+                                                    <button
+                                                        onClick={() => setEditingId(null)}
+                                                        className="px-3 py-1.5 text-xs font-bold text-slate-400 hover:text-slate-600"
+                                                    >
+                                                        Cancelar
+                                                    </button>
+                                                    <button
+                                                        onClick={() => saveEdit(q.id)}
+                                                        className="px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg shadow-md shadow-blue-200 hover:bg-blue-700 transition-colors"
+                                                    >
+                                                        Guardar Cambios
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     )}
 
-                                    {/* Short Answer, Fill Gaps, or any text-based type (fallback) */}
-                                    {(q.type === 'short_answer' || q.type === 'fill_gaps' ||
-                                        (!q.options || q.options.length === 0)) && q.type !== 'text_input' && q.type !== 'word_order' && q.type !== 'fill_blanks' && (
+                                    {/* Inputs based on Type */}
+                                    <div className="pl-11">
+                                        {/* Multiple Choice & True/False */}
+                                        {(q.type === 'multiple_choice' || q.type === 'true_false') && q.options && q.options.length > 0 && (
+                                            <div className="space-y-3">
+                                                {q.options.map((opt, oIdx) => (
+                                                    <label key={oIdx} className="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-white/50 border border-transparent hover:border-gray-200 transition-colors">
+                                                        <input
+                                                            type="radio"
+                                                            name={`q-${q.id}`}
+                                                            className="w-5 h-5 text-blue-600 focus:ring-blue-500"
+                                                            checked={answers[q.id] === opt}
+                                                            onChange={() => handleAnswerChange(q.id, opt)}
+                                                            disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                        />
+                                                        <span className="text-gray-700">{opt}</span>
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Text Input - Nivel DIFÍCIL */}
+                                        {q.type === 'text_input' && (
                                             <div className="space-y-3">
                                                 <input
                                                     type="text"
-                                                    className="w-full p-4 border-2 border-dashed border-slate-300 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 bg-white transition-all text-lg font-semibold text-slate-800 shadow-sm"
+                                                    autofocus
+                                                    className="w-full p-4 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 bg-white transition-all text-lg font-semibold text-slate-800 shadow-sm"
                                                     placeholder="Escribe tu respuesta aquí..."
                                                     value={answers[q.id] || ''}
                                                     onChange={e => handleAnswerChange(q.id, e.target.value)}
                                                     disabled={!!correctionResult && !retryingIds.includes(q.id)}
                                                 />
+                                                {q.sample_answer && !correctionResult && (
+                                                    <p className="text-xs text-slate-400 font-medium italic pl-1">
+                                                        💡 Ejemplo sugerido: "{q.sample_answer}"
+                                                    </p>
+                                                )}
                                             </div>
                                         )}
 
-                                    {/* Hint Button (Conditionally Rendered) */}
-                                    {q.hint && !correctionResult && !hideHints && (
-                                        <button
-                                            onClick={() => toggleHint(q.id)}
-                                            className="mt-3 flex items-center gap-2 text-sm text-orange-600 hover:text-orange-700 font-medium transition-colors"
-                                        >
-                                            <Lightbulb className="w-4 h-4" />
-                                            {revealedHints[q.id] ? 'Ocultar Pista' : 'Necesito una Pista'}
-                                        </button>
-                                    )}
+                                        {/* Word Order - Nivel VIP (Diamante) */}
+                                        {q.type === 'word_order' && q.words && (
+                                            <WordOrderVip
+                                                questionId={q.id}
+                                                words={q.words}
+                                                initialValue={answers[q.id]}
+                                                disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                onAnswerChange={(id, val, metadata) => {
+                                                    // Guardamos la respuesta y adjuntamos metadatos de proceso para el evaluador
+                                                    setAnswers(prev => ({
+                                                        ...prev,
+                                                        [id]: val,
+                                                        [`${id}_process`]: metadata
+                                                    }));
+                                                }}
+                                            />
+                                        )}
 
-                                    {/* Hint Display */}
-                                    {revealedHints[q.id] && q.hint && !correctionResult && (
-                                        <div className="mt-2 p-3 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-800">
-                                            💡 <strong>Pista:</strong> {q.hint}
-                                        </div>
-                                    )}
+                                        {/* Fill Blanks - Nivel MEDIO / VIP */}
+                                        {q.type === 'fill_blanks' && q.word_bank && (
+                                            <FragmentVip
+                                                questionId={q.id}
+                                                text={q.text}
+                                                wordBank={q.word_bank}
+                                                initialValue={answers[q.id]}
+                                                disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                onAnswerChange={(id, val, metadata) => {
+                                                    setAnswers(prev => ({
+                                                        ...prev,
+                                                        [id]: val,
+                                                        [`${id}_process`]: metadata
+                                                    }));
+                                                }}
+                                            />
+                                        )}
 
-                                    {/* Feedback (After Correction) */}
-                                    {correctionResult && correctionResult.corrections[q.id] && !retryingIds.includes(q.id) && (
-                                        <div className={`mt-4 p-4 rounded-lg border-l-4 ${isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
-                                            <p className={`font-bold mb-2 ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
-                                                {isCorrect ? '✅ ¡Correcto!' : '❌ Incorrecto'}
-                                            </p>
+                                        {/* Voice Active - VIP Oral Mode */}
+                                        {q.type === 'voice' && (
+                                            <VoiceActiveVip
+                                                questionId={q.id}
+                                                instruction={q.ejercicio}
+                                                correctAnswer={q.correct_answer || q.respuesta}
+                                                initialValue={answers[q.id]}
+                                                disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                onAnswerChange={(id, val, metadata) => {
+                                                    setAnswers(prev => ({
+                                                        ...prev,
+                                                        [id]: val,
+                                                        [`${id}_process`]: metadata
+                                                    }));
+                                                }}
+                                            />
+                                        )}
 
-                                            {/* Intelligent Feedback Logic */}
-                                            {/* [RESET] Forced Unified Feedback: Ignoramos mapas y tarjetas antiguas para empezar de cero */}
-                                            <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg shadow-sm animate-in fade-in slide-in-from-bottom-2">
-                                                <div className="flex items-start gap-2">
-                                                    <span className="text-lg">💡</span>
-                                                    <div>
-                                                        <p className="text-xs font-bold text-blue-800 uppercase mb-1">Explicación</p>
-                                                        <p className="text-sm text-blue-900 leading-relaxed font-medium">
-                                                            {correctionResult.corrections[q.id].feedback}
-                                                        </p>
+                                        {/* Scanner - VIP Detective Highlighter */}
+                                        {q.type === 'scanner' && q.text && (
+                                            <ScannerVip
+                                                questionId={q.id}
+                                                text={q.text}
+                                                initialValue={answers[q.id]}
+                                                disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                onAnswerChange={(id, val, metadata) => {
+                                                    setAnswers(prev => ({
+                                                        ...prev,
+                                                        [id]: val,
+                                                        [`${id}_process`]: metadata
+                                                    }));
+                                                }}
+                                            />
+                                        )}
+
+                                        {/* Connector - VIP Magnetic Bridges */}
+                                        {q.type === 'connector' && q.pairs && (
+                                            <ConnectorVip
+                                                questionId={q.id}
+                                                pairs={q.pairs}
+                                                initialValue={answers[q.id]}
+                                                disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                onAnswerChange={(id, val, metadata) => {
+                                                    setAnswers(prev => ({
+                                                        ...prev,
+                                                        [id]: val,
+                                                        [`${id}_process`]: metadata
+                                                    }));
+                                                }}
+                                            />
+                                        )}
+
+                                        {/* Classification - VIP Magnetic Cubes */}
+                                        {q.type === 'classification' && q.items && q.buckets && (
+                                            <ClassificationVip
+                                                questionId={q.id}
+                                                items={q.items}
+                                                buckets={q.buckets}
+                                                initialValue={answers[q.id]}
+                                                disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                onAnswerChange={(id, val, metadata) => {
+                                                    setAnswers(prev => ({
+                                                        ...prev,
+                                                        [id]: val,
+                                                        [`${id}_process`]: metadata
+                                                    }));
+                                                }}
+                                            />
+                                        )}
+
+                                        {/* Multi Input - Para listas de palabras (Santillana Style) */}
+                                        {q.type === 'multi_input' && q.items && (
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                {q.items.map((item, idx) => (
+                                                    <div key={idx} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                                        <span className="font-bold text-gray-700">{item.prefix || ''}</span>
+                                                        <input
+                                                            type="text"
+                                                            className="flex-1 p-2 border-2 border-blue-200 rounded-lg focus:border-blue-500 bg-white text-sm"
+                                                            placeholder={item.placeholder || '...'}
+                                                            value={(answers[q.id] && answers[q.id][idx]) || ''}
+                                                            onChange={e => {
+                                                                const current = answers[q.id] || new Array(q.items.length).fill('');
+                                                                const next = [...current];
+                                                                next[idx] = e.target.value;
+                                                                handleAnswerChange(q.id, next);
+                                                            }}
+                                                            disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                        />
+                                                        <span className="font-bold text-gray-700">{item.suffix || ''}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Short Answer, Fill Gaps, or any text-based type (fallback) */}
+                                        {(q.type === 'short_answer' || q.type === 'fill_gaps' ||
+                                            (!q.options || q.options.length === 0)) && q.type !== 'text_input' && q.type !== 'word_order' && q.type !== 'fill_blanks' && (
+                                                <div className="space-y-3">
+                                                    <input
+                                                        type="text"
+                                                        className="w-full p-4 border-2 border-dashed border-slate-300 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 bg-white transition-all text-lg font-semibold text-slate-800 shadow-sm"
+                                                        placeholder="Escribe tu respuesta aquí..."
+                                                        value={answers[q.id] || ''}
+                                                        onChange={e => handleAnswerChange(q.id, e.target.value)}
+                                                        disabled={!!correctionResult && !retryingIds.includes(q.id)}
+                                                    />
+                                                </div>
+                                            )}
+
+                                        {/* Hint Button (Conditionally Rendered) */}
+                                        {q.hint && !correctionResult && !hideHints && (
+                                            <button
+                                                onClick={() => toggleHint(q.id)}
+                                                className="mt-3 flex items-center gap-2 text-sm text-orange-600 hover:text-orange-700 font-medium transition-colors"
+                                            >
+                                                <Lightbulb className="w-4 h-4" />
+                                                {revealedHints[q.id] ? 'Ocultar Pista' : 'Necesito una Pista'}
+                                            </button>
+                                        )}
+
+                                        {/* Hint Display */}
+                                        {revealedHints[q.id] && q.hint && !correctionResult && (
+                                            <div className="mt-2 p-3 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-800">
+                                                💡 <strong>Pista:</strong> {q.hint}
+                                            </div>
+                                        )}
+
+                                        {/* Feedback (After Correction) */}
+                                        {correctionResult && correctionResult.corrections[q.id] && !retryingIds.includes(q.id) && (
+                                            <div className={`mt-4 p-4 rounded-lg border-l-4 ${isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
+                                                <p className={`font-bold mb-2 ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
+                                                    {isCorrect ? '✅ ¡Correcto!' : '❌ Incorrecto'}
+                                                </p>
+
+                                                {/* Intelligent Feedback Logic */}
+                                                {/* [RESET] Forced Unified Feedback: Ignoramos mapas y tarjetas antiguas para empezar de cero */}
+                                                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg shadow-sm animate-in fade-in slide-in-from-bottom-2">
+                                                    <div className="flex items-start gap-2">
+                                                        <span className="text-lg">💡</span>
+                                                        <div>
+                                                            <p className="text-xs font-bold text-blue-800 uppercase mb-1">Explicación</p>
+                                                            <p className="text-sm text-blue-900 leading-relaxed font-medium">
+                                                                {correctionResult.corrections[q.id].feedback}
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    )}
-                                </div>
+                                        )}
                                     </div>
-                        );
-                            })}
+                                </div>
+                            );
+                        })}
                     </div>
                     </div>
                 ))}
